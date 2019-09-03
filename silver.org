@@ -1,0 +1,550 @@
+
+* やること
+** TODO JobCode -> PD 共通？ 教育？
+** TODO 支払い方法、cardを確認する
+** TODO 予約する
+* Java SE8 Silver <2019-09-02 月>
+ https://javattemiru.com/category/java-silver%E7%B7%B4%E7%BF%92%E5%95%8F%E9%A1%8C/
+** 2
+*** 2-1
+ #+BEGIN_SRC java :results output :exports both :classname Question_1_3
+ class Question_1 {
+     int num = 0;
+ }
+ class Question_1_2 extends Question_1 {
+     int num = 1;
+ }
+ public class Question_1_3 {
+     public static void main(String[] args) {
+         Question_1 question_1 = new Question_1();
+         Question_1 question_1_2 = new Question_1_2();
+         System.out.println(question_1.num);
+         System.out.println(question_1_2.num);
+     }
+ }
+ #+END_SRC
+ インスタンス生成時に、親クラスの型を指定しているので、親クラスのフィールド
+ #+RESULTS:
+ : 0
+ : 0
+*** 2-2
+ #+BEGIN_SRC java :results output :exports both :classname Question_2
+ public class Question_2 {
+     public static void main(String[] args) {
+         try {
+           System.out.println(args[3]);
+         } catch(Exception e) {
+            System.out.println(e.getMessage()); 
+         }
+     }
+ }
+
+ #+END_SRC
+
+ #+RESULTS:
+ : Index 3 out of bounds for length 0
+*** 2-3
+ #+BEGIN_SRC java :results output :exports both :classname Q3
+ public class Q3 {
+   public static void main(String[] args) {
+     int num1 = 2;
+     int num2 = 5;
+
+     while(num1 < num2) {
+       num1++;
+       num2++;
+
+       if(num1 < num2) {
+         System.out.println(num1 < num2);
+         num2--;
+       }
+     }
+   }
+ }
+ #+END_SRC
+
+ #+RESULTS:
+ : true
+ : true
+ : true
+
+*** 2-4
+ #+BEGIN_SRC java :results output :exports both :classname Q4
+ public class Q4 {
+   public static void main(String[] args) {
+     char A = '1';
+     char B = 1180;
+     Integer C = null;
+     // char c = "h";  <- ""で囲むとStringとして認識されてしまう
+     // int  c = null; <- プリミティブ型はnullを代入できない!
+     // char c = null; <- プリミティブ型はnullを代入できない!
+     System.out.println(C);
+   }
+ }
+ #+END_SRC
+
+ #+RESULTS:
+ : null
+*** 2-5
+ #+BEGIN_SRC java :results output :exports both :classname Q5
+   public class Q5 {
+     public static void main(String[] args) {
+       String str = "A";
+       String[] strArray = {"A","B","C"};
+       /*
+         caseというのはあくまで「そこに跳ぶ」というだけで、それ以降のcaseもお構いなしに全部実行してしまう
+         -> breakしなければいけばい
+       */
+       switch(str) {
+         // case strArray[0]: <- case式は定数じゃないと駄目
+         // case strArray[1]:
+         // case strArray[2]:
+         case "A":
+           System.out.println(strArray[0]);
+           break; // <- breakがないとdefaultに入ってしまう
+         case "B":
+         case "C":
+         // case 1: <- 各caseで示す値の型が異なっている場合は、コンパイルエラー
+
+         default:System.out.println("D");
+       }
+     }
+   }
+ #+END_SRC
+
+ #+RESULTS:
+ : A
+
+*** 2-6
+ #+BEGIN_SRC java :results output :exports both :classname Q6
+ public class Q6 {
+   public static void main(String[] args) {
+     StringBuilder sb = new StringBuilder();
+     System.out.println(sb.capacity());
+   }
+ }
+ #+END_SRC
+
+ #+RESULTS:
+ : 16
+
+*** 2-7
+ #+BEGIN_SRC java :results output :exports both :classname Q7
+ public class Q7 {
+   public static void main(String[] args) {
+     String str = "";
+     if (str.isEmpty()) { // null.isEmptyはヌルポで落る
+       System.out.println("empty");
+     } else {
+       System.out.println("null");
+     }
+   }
+ }
+ #+END_SRC
+
+ #+RESULTS:
+ : empty
+ #+END_SRC
+
+*** 2-8
+ #+BEGIN_SRC java :results output :exports both :classname Q8
+ public class Q8 {
+   public static void main(String[] args) {
+     Integer[] array = {1,2,3,4,5};
+     array[4] = null;
+     for (int i = 0; i < array.length; i++) {
+       System.out.print(array[i]);
+     }
+   }
+ }
+   
+ #+END_SRC
+
+ #+RESULTS:
+ : 1234null
+
+*** 2-9
+ #+BEGIN_SRC java :results output :exports both :classname Q9
+ public class Q9 {
+   public static void main(String[] args) {
+     String[] array1 = {"A","B","C","D","E"};
+     String[] array2 = array1.clone();
+     System.out.println(array1 == array2);
+   }
+ }
+ #+END_SRC
+
+ 値は同じだが、参照先が異るため、falseとなる
+ #+RESULTS:
+
+** 3
+*** 3-1
+    #+BEGIN_SRC java :results output :exports both :classname Q31
+    public class Q31 {
+      public static void main(String[] args) {
+        String[] strArray = new String[5];
+        try {
+          strArray[5] = "String";
+          System.out.println(strArray[5]);
+        } catch(Exception e) {
+          System.out.println(e);
+        }   
+      }
+    }
+#+END_SRC
+
+#+RESULTS:
+: java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5
+
+*** 3-2
+#+BEGIN_SRC java :results output :exports both :classname Q22
+abstract class AbstractClass {
+  public static final String string = null;
+  private static final Integer integer = null;
+  private static final Boolean flg = null;
+}
+
+public class Q22 extends AbstractClass {
+	public static void main(String[] args) {
+		System.out.print(string);
+		// System.out.print(integer); <- 親クラスのフィールドがprivate参照できない
+		// System.out.print(flg);
+	}
+}
+#+END_SRC
+
+#+RESULTS:
+: null
+
+*** 3-6
+    #+BEGIN_SRC java :results output :exports both :classname Q36
+    public class Q36 {
+      public static void main(String[] args) {
+        int a = 1;
+        if(a-- == 1) { // インクリメント、デクリメントはできる（判定後にインクリメントされる）
+          System.out.println("true: " + a);
+        } else {
+          System.out.println("false: " + a);
+        }
+        System.out.println("finaly: " + a);
+      }
+    }
+#+END_SRC
+
+#+RESULTS:
+: true: 0
+: finaly: 0
+
+*** 3-7
+#+BEGIN_SRC java :results output :exports both :classname Q37
+public class Q37 {
+  public static void main(String[] args) {
+    StringBuilder sb = new StringBuilder();
+    sb.append("JAVA");
+    for (int i = 0; i < 10; i++) {
+      sb.reverse();
+      sb.append("PO");
+      System.out.println(sb);
+    }
+    System.out.println(sb.toString().endsWith("A"));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+AVAJPO
+OPJAVAPO
+OPAVAJPOPO
+OPOPJAVAPOPO
+OPOPAVAJPOPOPO
+OPOPOPJAVAPOPOPO
+OPOPOPAVAJPOPOPOPO
+OPOPOPOPJAVAPOPOPOPO
+OPOPOPOPAVAJPOPOPOPOPO
+OPOPOPOPOPJAVAPOPOPOPOPO
+false
+#+end_example
+
+*** 3-10
+#+BEGIN_SRC java :results output :exports both :classname Q310
+public class Q310 {
+  public static void main(String[] args) {
+    int i = 0;
+    do {
+      i++;
+      System.out.println("1: " + i); 
+    } while (i++ < 5);
+      
+
+    System.out.println("2: " + i); 
+
+    if (!(i % 2 != 0)) {
+      System.out.println("3: " + i); 
+      String[] array = new String[i];
+      System.out.println(array.length - 1);
+      return;
+    }
+
+    System.out.println("example");
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 1: 1
+: 1: 3
+: 1: 5
+: 2: 6
+: 3: 6
+: 5
+
+** 4
+*** 4-1
+    #+BEGIN_SRC java :results output :exports both :classname Q41
+    public class Q41 {
+      public static void main(String[] args) {
+        String str = "JAVA SILVER";
+    	Runnable r = () -> {
+    	  System.out.println(str += "a");
+    	};
+    	Thread thread = new Thread(r);
+        thread.start();
+      }
+    }
+#+END_SRC
+ラムダ式から参照されるローカル変数は、finalまたは事実上のfinalである必要がある
+-> コンンパイルエラー
+#+RESULTS:
+*** 4-2
+#+BEGIN_SRC java :results output :exports both :classname Q42
+public class Q42 {
+  public static void main(String[] args) {
+    method();
+  }
+  
+  private void method() {
+    for (int i = 0; i < 10; i++) {
+      System.out.print("A");
+    }
+  }
+}
+#+END_SRC
+
+staticでないメソッド method()をstaticコンテキストから参照することはできない
+#+RESULTS:
+*** 4-3
+
+#+BEGIN_SRC java :results output :exports both :classname Q43
+public class Q43 {
+  public static void main(String[] args) {
+    int a = 0b1010;
+    System.out.println(a);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 10
+
+*** 4-8
+#+BEGIN_SRC java :results output :exports both :classname Q48
+public class Q48 {
+  public static void main(String[] args) {
+    String str = "Str";
+    StringBuilder sb = new StringBuilder();
+    for (char character : str.toCharArray()) {
+      sb.append(character);
+    }
+    System.out.println(sb.toString().substring(0,0)); //0番目から0文字だけ表示
+    System.out.println(sb.toString().substring(0,1));
+    System.out.println(sb.toString().substring(0,2));
+    System.out.println(sb.toString().substring(0,3));
+    System.out.println(sb.toString().substring(0,sb.toString().length()));
+    try {
+    System.out.println(sb.toString().substring(0,4));
+    } catch(Exception e) {
+    System.out.println(e);
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 
+: S
+: St
+: Str
+: Str
+: java.lang.StringIndexOutOfBoundsException: begin 0, end 4, length 3
+
+** 5
+*** 5-5
+    #+BEGIN_SRC java :results output :exports both :classname Q55
+    public class Q55 {
+      public static void main(String[] args) {
+        String[] strArray = {"S","t","r","i","n","g"};
+      for (String str : strArray) {
+        str = "JAVA";
+      }
+        System.out.println(strArray[0]);
+      }
+    }
+#+END_SRC
+strは一時変数
+#+RESULTS:
+: S
+*** 5-6
+#+BEGIN_SRC java :results output :exports both :classname Q56
+public class Q56 {
+  public static void main(String[] args) {
+    try {
+      int a = Integer.parseInt("100L");
+    } catch(Exception e) {
+      System.out.println(e);
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: java.lang.NumberFormatException: For input string: "100L"
+
+*** 5-7
+#+BEGIN_SRC java :results output :exports both :classname Q59
+public class Q59 {
+  public static void main(String[] args) {
+    String str = "JAVA SILVER";  
+    System.out.println(str.replace("JAVA ", "")); // <- 代入していない
+    System.out.println(str);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: SILVER
+: JAVA SILVER
+
+*** 5-10
+#+BEGIN_SRC java :results output :exports both :classname Q510
+public class Q510 {
+  public static void main(String[] args) {
+    StringBuilder sb = new StringBuilder("java");
+    String[] array = sb.toString().split("a");
+    for (int i = 0; i < array.length; i++) {
+      System.out.print(array[i]);
+    }
+    for (int i = 0; i < array.length; i++) {
+      array[i] = array[i] + "a";
+    }
+    for (int i = 0; i < array.length; i++) {
+      System.out.print(array[i]);
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: jvjava
+
+** Stringbuilder
+   #+BEGIN_SRC java :results output :exports both :classname SbTest
+   public class SbTest {
+     public static void main(String[] args) {
+       StringBuilder sb = new StringBuilder();
+       sb.append(true);
+       sb.append(false);
+       System.out.println("1 : " + sb + ": size : " + sb.length()); // boolもいける
+
+       sb.append('A');
+       System.out.println("2 : " + sb + ": size : " + sb.length());
+
+       char[] charArray = {'a','b','c','d'};
+       sb.append(charArray, 1, 2); // char[], offset, length
+       System.out.println("3 : " + sb + ": size : " + sb.length());
+
+       System.out.println("4 : " + sb.append("HOGE") + ": size : " + sb.length());
+       System.out.println("capacity : " + sb.capacity() + 
+        " -> " + new StringBuilder(99).capacity());
+       System.out.println("5 : " + sb.append(1) + ": size : " + sb.length());
+       System.out.println("6 : " + sb.reverse() + ": size : " + sb.length());
+       System.out.println("7 : " + sb.delete(1, 3) + ": size : " + sb.length());
+       System.out.println("8 : " + sb.deleteCharAt(0) + ": size : " + sb.length());
+       System.out.println("9 : " + sb.insert(5, "@@@") + ": size : " + sb.length());
+     }
+   }
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+1 : truefalse: size : 9
+2 : truefalseA: size : 10
+3 : truefalseAbc: size : 12
+4 : truefalseAbcHOGE: size : 16
+capacity : 16 -> 99
+5 : truefalseAbcHOGE1: size : 17
+6 : 1EGOHcbAeslafeurt: size : 17
+7 : 1OHcbAeslafeurt: size : 15
+8 : OHcbAeslafeurt: size : 14
+9 : OHcbA@@@eslafeurt: size : 17
+#+end_example
+
+* 黒本
+** 第2章 <2019-09-03 火>
+*** 数値
+
+    #+BEGIN_SRC java :results output :exports both :classname NumTest
+    public class NumTest {
+      public static void main(String[] args) {
+        int a = 10;     // 10進
+        int b = 012;    // 0NN  -> 8進
+        int c = 0xA;    // 0xNN -> 16進
+        int d = 0b1010; // 0bNN -> 2進
+
+        System.out.println("a->"+a+", b->"+b+", c->"+c+", d->" + d);
+
+        int e = 100___0____0____0; //アンスコは連続でもOK
+        // int f = _100;
+        // int g = 100_; 先頭と末尾はダメ
+        
+        // long h = 100_L; 記号の前後もダメ
+        // float i = 100_F;
+        // int j = 0x_AF;
+        // int m = 0b_1001
+        int k = 0xA_F;
+        int n = 0_12;
+        System.out.println("k->"+k+", n->"+n);
+      }
+    }
+#+END_SRC
+
+#+RESULTS:
+: a->10, b->10, c->10, d->10
+: k->175, n->10
+*** 命名規則
+  #+BEGIN_SRC java :results output :exports both :classname NamingTest
+  public class NamingTest {
+    public static void main(String[] args) {
+      // 貨幣記号とアンスコは使える  
+      int £_ = 11;
+      String _hoge_1 = "hoge";
+      // int 1hoge = 11; 数値からは使えない
+      System.out.println("£_->"+£_ + " hoge_1" + _hoge_1);
+    }
+  }
+#+END_SRC
+
+#+RESULTS:
+: £_->11 hoge_1hoge
+** 第3章 <2019-09-03 火> 
+*** マイナス
+* テンプレート
+
+#+BEGIN_SRC java :results output :exports both :classname QN
+public class QN {
+  public static void main(String[] args) {
+
+  }
+}
+#+END_SRC
+
