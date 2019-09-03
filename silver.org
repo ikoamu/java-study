@@ -1,5 +1,5 @@
 
-* やること
+* やることz
 ** TODO JobCode -> PD 共通？ 教育？
 ** TODO 支払い方法、cardを確認する
 ** TODO 予約する
@@ -538,8 +538,53 @@ capacity : 16 -> 99
 : £_->11 hoge_1hoge
 ** 第3章 <2019-09-03 火> 
 *** マイナス
-* テンプレート
+#+BEGIN_SRC java :results output :exports both :classname MinusTest
+public class MinusTest {
+  public static void main(String[] args) {
+    int a = -10;
+    System.out.println(-a*-a - -a);
+  }
+}
+#+END_SRC
 
+#+RESULTS:
+: 90
+*** 型変換
+#+BEGIN_SRC java :results output :exports both :classname Kata
+public class Kata {
+  public static void main(String[] args) {
+    // byte a = 0b10000000; <- intだと思われてコンパイルエラーになる
+    byte a = (byte) 0b10000000; // <-castしなければいけない
+    System.out.println(a);
+    // float b = 10.0; <- doubleだと思われてコンパイルエラーになる
+    float b = (float)10.0;
+    System.out.println(b);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: -128
+: 10.0
+*** インクリメント・デクリメント
+#+BEGIN_SRC java :results output :exports both :classname IncrementDecrement
+public class IncrementDecrement {
+  public static void main(String[] args) {
+    int a = 10;
+    //      10   11   11   12    12  
+    int b = a + a++ + ++a + a - a--;
+    System.out.println(b);
+  }
+}
+#+END_SRC
+
+前置インクリメント ｰ> 演算結果を代入
+後置インクリメント ｰ> もとの値のコピーが戻されてから加算
+#+RESULTS:
+: 32
+*** switch
+
+* テンプレート
 #+BEGIN_SRC java :results output :exports both :classname QN
 public class QN {
   public static void main(String[] args) {
@@ -547,4 +592,3 @@ public class QN {
   }
 }
 #+END_SRC
-
