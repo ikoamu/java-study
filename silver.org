@@ -1,7 +1,7 @@
 
-* やることz
+* やること
 ** TODO JobCode -> PD 共通？ 教育？
-** TODO 支払い方法、cardを確認する
+** DONE 支払い方法、cardを確認する
 ** TODO 予約する
 * Java SE8 Silver <2019-09-02 月>
  https://javattemiru.com/category/java-silver%E7%B7%B4%E7%BF%92%E5%95%8F%E9%A1%8C/
@@ -759,7 +759,260 @@ public class LabelTest {
 : j -> 1
 : break(i,j)-> 1,1
 ** 第6章 <2019-09-04 水>
-*** 
+*** staticなフィールド
+#+BEGIN_SRC java :results output :exports both :classname StaticFieldTest
+public class StaticFieldTest {
+  public static void main(String[] args) {
+    System.out.println(Sample.num);
+    Sample.num = 100;
+    System.out.println(Sample.num);
+
+    Sample sample1 = new Sample();
+    System.out.println(sample1.num);
+    Sample sample2 = new Sample();
+    System.out.println(sample2.num);
+
+    sample1.num = 1000;
+    System.out.println(sample2.num);
+    System.out.println(Sample.num);
+  }
+}
+
+class Sample {
+  static int num = 10;
+}
+#+END_SRC
+
+#+RESULTS:
+: 10
+: 100
+: 100
+: 100
+: 1000
+: 1000
+*** 初期化ブロック
+#+BEGIN_SRC java :results output :exports both :classname InitBlockTest
+public class InitBlockTest {
+  public static void main(String[] args) {
+    Sample sample1 = new Sample();
+    Sample sample2 = new Sample("hoge");
+    System.out.println(sample1.b + " " + sample2.b);
+  }
+}
+
+class Sample {
+
+  public int b = 1;
+
+  {
+    System.out.println(b++);
+    System.out.println("initblocktest1");
+    System.out.println(b++);
+  }
+  
+  public Sample() {
+    System.out.println("1"); 
+  }
+
+  {
+    System.out.println(b++);
+    System.out.println("initblocktest2");
+  }
+
+  public Sample(String a) {
+    System.out.println(b++);
+    System.out.println("2 " + a); 
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+1
+initblocktest1
+2
+3
+initblocktest2
+1
+1
+initblocktest1
+2
+3
+initblocktest2
+4
+2 hoge
+4 5
+#+end_example
+*** コンストラクタのオーバーロード
+#+BEGIN_SRC java :results output :exports both :classname ConstractaOverRoad
+public class ConstractaOverRoad {
+  public static void main(String[] args) {
+    SampleA sample = new SampleA("po");
+    SampleA sample2 = new SampleA();
+  }
+}
+
+class SampleA {
+
+  public SampleA() {
+    // System.out.println("hoge~"); <-エラー: thisの呼出しはコンストラクタの先頭文である必要がある
+    this("hoi");
+  }
+  public SampleA(String a) {
+    System.out.println("fuga~" + a);
+  }
+}
+  
+#+END_SRC
+
+#+RESULTS:
+: fuga~po
+: fuga~po
+** 第7章 <2019-09-04 水>
+*** 継承について
+    - 継承で引き継がれないもの
+      - コンストラクタ
+      - privateなフィールド、メソッド
+*** 抽象クラス
+#+BEGIN_SRC java :results output :exports both :classname AbstractClassTest
+public class AbstractClassTest {
+  public static void main(String[] args) {
+    Abs  c1 = new Conc();
+    Conc c2  = new Conc();
+    c1.sample();
+    c2.sample();
+  }
+}
+
+abstract class Abs {
+  public void sample() {
+    System.out.println("A");
+    test();
+    System.out.println("C");
+  }
+  
+  protected abstract void test();
+}
+
+class Conc extends Abs {
+  protected void test() {
+    System.out.println("B");
+  }
+}
+#+END_SRC
+結果が同じとなる
+#+RESULTS:
+: A
+: B
+: C
+: A
+: B
+: C
+*** オーバーライド
+    - オーバーライドの条件
+      - シグニチャが同じであること
+      - 戻り値が同じか、サブクラスであること
+      - アクセス修飾子が同じか、よりゆるいもの
+
+#+BEGIN_SRC java :results output :exports both :classname OverrideTest
+public class OverrideTest {
+  public static void main(String[] args) {
+    
+  }
+}
+#+END_SRC
+*** インターフェイス
+#+BEGIN_SRC java :results output :exports both :classname InterfaceTest
+public class InterfaceTest {
+  public static void main(String[] args) {
+    Greet greet = new Greet() {
+      public void sayHello(String name){
+        System.out.println(name + " こんにちわ！");
+      }
+    };
+
+    greet.sayHello("hoge");
+
+    Greet lam = (name) -> {
+      System.out.println(name + " こんばんわ！");};
+    lam.sayHello("huga");
+
+    Greet lam2 = name2 -> System.out.println(name2 + " Hello");
+    
+
+    lam2.sayHello("piyo");
+  }
+}
+
+interface Greet {       
+  public void sayHello(String name);
+}
+#+END_SRC
+
+#+RESULTS:
+: hoge こんにちわ！
+: huga こんばんわ！
+: piyo Hello
+*** ダウンキャスト
+#+BEGIN_SRC java :results output :exports both :classname DownCastTest
+public class DownCastTest {
+  public static void main(String[] args) {
+    A a = new A();
+    try {
+      B b = (B) a;
+    } catch(Exception e) {  // コンパイルエラーではなく、実行時エラーとなる。
+      System.out.println(e);
+    }
+  }
+}
+
+class A {
+  void hello() {
+    System.out.println("A");
+  }
+}
+
+class B extends A {
+  void hello() {
+    System.out.println("B");
+  }
+}
+
+#+END_SRC
+
+#+RESULTS:
+: java.lang.ClassCastException: class A cannot be cast to class B (A and B are in unnamed module of loader 'app')
+*** 継承関係とコンストラクタ
+#+BEGIN_SRC java :results output :exports both :classname ConsTest
+public class ConsTest {
+  public static void main(String[] args) {
+  A a = new B();
+  }
+}
+
+class A {
+  public A() {
+    System.out.println("A");
+  }
+
+  public A(String s) {
+    System.out.println(s);
+  }
+}
+
+class B extends A {
+  public B() {
+    // super(); <- コンパイル時に自動追加される
+    super("T");
+    System.out.println("B");
+  }
+}
+
+#+END_SRC
+
+#+RESULTS:
+: T
+: B
 * テンプレート
 #+BEGIN_SRC java :results output :exports both :classname QN
 public class QN {
