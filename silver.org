@@ -536,7 +536,7 @@ capacity : 16 -> 99
 
 #+RESULTS:
 : £_->11 hoge_1hoge
-** 第3章 <2019-09-03 火> 
+** 第3章 <2019-09-03 火>
 *** マイナス
 #+BEGIN_SRC java :results output :exports both :classname MinusTest
 public class MinusTest {
@@ -583,7 +583,183 @@ public class IncrementDecrement {
 #+RESULTS:
 : 32
 *** switch
+** 第4章 <2019-09-03 火>
+*** 配列
+#+BEGIN_SRC java :results output :exports both :classname ArrayTest
+public class ArrayTest {
+  public static void main(String[] args) {
+    int[] array1 = new int[0]; // <- 配列数0 (要素数は後から変更できない)
+    System.out.println("array1 is " + array1);
+    int[] array2 = new int[1]; // <- 配列数1 (要素数は後から変更できない)
+    System.out.println("array2 is " + array2[0]);
 
+    // []は変数の後ろでも、データ型のうしろでもいい
+    // -> 技術者への配慮
+    int array3[] = {1, 2, 3}; // <- 配列数1 (要素数は後から変更できない)
+    System.out.println("array3 is " + array3[0] + array3[1] + array3[2]);
+
+    int[] array4[] = {{1, 2}, {3}}; // 二次元配列の宣言
+
+    int[][] array5[] = { //三次元配列の宣言
+                         {{ 1, 2, 3},{ 4, 5, 6}},
+                         {{-1,-2,-3},{-4,-5,-6}},
+                       };
+    int array6[][] = new int[1][];
+    // int array7[][] = new int[][1]; 一次元目の要素数は省略できない
+    int[][] array8[] = new int[1][][];
+    int[][] array9[] = new int[1][1][];
+    // int[][] array10[] = new int[][1][1]; 一次元目の要素数は省略できない
+
+
+    Item items[] = new Item[3]; // 配列をnewしただけであって、Itemのインスタンスは生成していない
+    try {
+      System.out.println(items[1].price);
+    } catch (NullPointerException e) {
+      System.out.println(e);
+    }
+
+    // int[] a = new int[2]{2, 3}; <- 次元式と初期化の両方を使用した配列の作成は無効です
+    // int a1[] = {2, 3}; <--> int a1[] = new int[]{2,3};
+    // int a2[] = {}; <------> int a2[] = new int[0];
+    int b[][] = {};
+    int[][] c = new int[][]{};
+    /*
+    int[] e;
+    e = {2, 3}; <- 宣言のあとに初期演算子は使えない
+    */
+  }
+}
+
+class Item {
+  String name;
+  int price = 100;
+}
+#+END_SRC
+
+#+RESULTS:
+: array1 is [I@1f32e575
+: array2 is 0
+: array3 is 123
+: java.lang.NullPointerException
+*** arraycopy
+#+BEGIN_SRC java :results output :exports both :classname ArrayCopyTest
+public class ArrayCopyTest {
+  public static void main(String[] args) {
+    char[] charArray1 = {'a','b','c','d'};
+    char charArray2[] = new char[charArray1.length];
+    System.arraycopy(
+      charArray1,        // コピー元
+               1,        // コピー元の先頭を指定（0が一番前）
+      charArray2,        // コピー先
+               0,        // コピー先のどこからコピーを開始するか
+      charArray2.length - 2 // コピー先のどこまででコピーを終えるか
+    );
+    for (char c : charArray2) {
+      System.out.println(c);
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: b
+: c
+:  
+:  
+** 第5章 <2019-09-03 火>
+*** forループの構文
+#+BEGIN_SRC java :results output :exports both :classname ForLoopTest
+public class ForLoopTest {
+  public static void main(String[] args) {
+    // 初期化文で宣言する変数の型は１つだけ
+    // int i = 0, int j = 5  <- error!
+    // int i = 0, long j = 5 <- error!
+    for(int i = 0, j = 5; i<= 2; i++, --j, func()) { // <- 定義した関数も更新文に入れれる
+      System.out.println(i+ " <- i : j -> " +j);
+    }
+  }
+
+  private static void func() {
+    System.out.println("----------------");
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 0 <- i : j -> 5
+: ----------------
+: 1 <- i : j -> 4
+: ----------------
+: 2 <- i : j -> 3
+: ----------------
+*** インクリメント
+#+BEGIN_SRC java :results output :exports both :classname IncrementTest
+public class IncrementTest {
+  public static void main(String[] args) {
+    int num = 10;
+    // "1"
+    do {
+      num++; // 11
+    } while(++num < 12); // インクリメント後に判定
+    System.out.println("1: " + num);
+
+    num = 10;
+    // "2"
+    do {
+      num++; // 11
+    } while(num++ < 12); // 判定後にインクリメント
+    System.out.println("2: " + num);
+
+
+    num = 10;
+    // "3"
+    while(++num <= 10) {
+      num++;
+    }
+    System.out.println("3: " + num);
+
+    num = 10;
+    // "4"
+    while(num++ <= 10) { // 2回目のループに入るかどうかの判定あとにもインクリメントされる->13
+      num++;
+    }
+    System.out.println("4: " + num);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 1: 12
+: 2: 14
+: 3: 11
+: 4: 13
+*** ラベル
+#+BEGIN_SRC java :results output :exports both :classname LabelTest
+public class LabelTest {
+  public static void main(String[] args) {
+    // forループのラベル
+    looplabel:
+    for (int i = 1; i<=2; i++) {
+      System.out.println("i -> " + i);
+      for (int j = 0; j <=2; j++) {
+        System.out.println("j -> " + j);
+        if (j == i) {
+          System.out.println("break(i,j)-> " + i + "," + j);
+          break looplabel;
+        }
+      }
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: i -> 1
+: j -> 0
+: j -> 1
+: break(i,j)-> 1,1
+** 第6章 <2019-09-04 水>
+*** 
 * テンプレート
 #+BEGIN_SRC java :results output :exports both :classname QN
 public class QN {
