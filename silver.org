@@ -526,16 +526,16 @@ capacity : 16 -> 99
   public class NamingTest {
     public static void main(String[] args) {
       // 貨幣記号とアンスコは使える  
-      int £_ = 11;
+      int ￡_ = 11;
       String _hoge_1 = "hoge";
       // int 1hoge = 11; 数値からは使えない
-      System.out.println("£_->"+£_ + " hoge_1" + _hoge_1);
+      System.out.println("￡_->"+￡_ + " hoge_1" + _hoge_1);
     }
   }
 #+END_SRC
 
 #+RESULTS:
-: £_->11 hoge_1hoge
+: ￡_->11 hoge_1hoge
 ** 第3章 <2019-09-03 火>
 *** マイナス
 #+BEGIN_SRC java :results output :exports both :classname MinusTest
@@ -664,8 +664,8 @@ public class ArrayCopyTest {
 #+RESULTS:
 : b
 : c
-:  
-:  
+: \0
+: \0
 ** 第5章 <2019-09-03 火>
 *** forループの構文
 #+BEGIN_SRC java :results output :exports both :classname ForLoopTest
@@ -1013,11 +1013,40 @@ class B extends A {
 #+RESULTS:
 : T
 : B
+** 第8章 <2019-09-05 木>
+*** catch句とfinaly句の両方にreturnがあるとき
+#+BEGIN_SRC java :results output :exports both :classname ReturnTest
+public class ReturnTest {
+  public static void main(String[] args) {
+    System.out.println(sample());
+  }
+
+  private static String sample() {
+    try {
+      throw new RuntimeException();
+//      return "C";
+    } catch (Exception e) {
+      return "A";
+    } finally {
+      return "B"; // <- finally の return が最終的に返る
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: B
+*** RuntimeException
+**** RuntimeException系の例外は、throws句やtry-catch句を強制されない
+*** staticイニシャライザ
+**** クラスを利用するときに、1度だけ呼び出される初期化ブロック
+**** staticイニシャライザ内での例外は、ExceptionInitializerErrorとなる
 * テンプレート
-#+BEGIN_SRC java :results output :exports both :classname QN
-public class QN {
+#+BEGIN_SRC java :results output :exports both :classname 
+public class  {
   public static void main(String[] args) {
 
   }
 }
 #+END_SRC
+
