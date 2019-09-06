@@ -1,8 +1,9 @@
 
 * やること
-** TODO JobCode -> PD 共通？ 教育？
+** DONE JobCode -> PD 共通？ 教育？
 ** DONE 支払い方法、cardを確認する
 ** TODO 予約する
+** TODO switch文の復習
 * 練習問題 <2019-09-02 月>
  https://javattemiru.com/category/java-silver%E7%B7%B4%E7%BF%92%E5%95%8F%E9%A1%8C/
 ** 2
@@ -1346,7 +1347,6 @@ public class RemoveIfTest {
 : 7
 : 8
 : 10
-
 * テンプレート 
 #+BEGIN_SRC java :results output :exports both :classname 
 public class {
