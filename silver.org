@@ -3,7 +3,7 @@
 ** TODO JobCode -> PD 共通？ 教育？
 ** DONE 支払い方法、cardを確認する
 ** TODO 予約する
-* Java SE8 Silver <2019-09-02 月>
+* 練習問題 <2019-09-02 月>
  https://javattemiru.com/category/java-silver%E7%B7%B4%E7%BF%92%E5%95%8F%E9%A1%8C/
 ** 2
 *** 2-1
@@ -356,7 +356,7 @@ public class Q48 {
     for (char character : str.toCharArray()) {
       sb.append(character);
     }
-    System.out.println(sb.toString().substring(0,0)); //0番目から0文字だけ表示
+    System.out.println(sb.toString().substring(0,0)); //0番目から0番目だけ表示
     System.out.println(sb.toString().substring(0,1));
     System.out.println(sb.toString().substring(0,2));
     System.out.println(sb.toString().substring(0,3));
@@ -941,11 +941,18 @@ public class InterfaceTest {
     
 
     lam2.sayHello("piyo");
+
+    Hoge lam3 = piyo -> "PIYO -> " + piyo;  // {} ないときはreturn いらない
+    System.out.println(lam3.piyo("HOGE"));
   }
 }
 
 interface Greet {       
   public void sayHello(String name);
+}
+
+interface Hoge {
+  public String piyo(String piyo);
 }
 #+END_SRC
 
@@ -953,6 +960,7 @@ interface Greet {
 : hoge こんにちわ！
 : huga こんばんわ！
 : piyo Hello
+: PIYO -> HOGE
 *** ダウンキャスト
 #+BEGIN_SRC java :results output :exports both :classname DownCastTest
 public class DownCastTest {
@@ -1041,12 +1049,310 @@ public class ReturnTest {
 *** staticイニシャライザ
 **** クラスを利用するときに、1度だけ呼び出される初期化ブロック
 **** staticイニシャライザ内での例外は、ExceptionInitializerErrorとなる
-* テンプレート
-#+BEGIN_SRC java :results output :exports both :classname 
-public class  {
+** 第9章 <2019-09-05 木>
+*** str.indexOf
+#+BEGIN_SRC java :results output :exports both :classname StringIndexOfTest
+public class StringIndexOfTest{
   public static void main(String[] args) {
+    //            0123456
+    String str = "abc1def";
+    System.out.println(str.indexOf("1"));
+    System.out.println(str.indexOf("c1"));
+    System.out.println(str.indexOf(str));
+    System.out.println(str.indexOf(""));  // 空文字は0
+    System.out.println(str.indexOf("xx"));
 
+    String str2 = "a1c1d11f"; // 最初に見つかったところ
+    System.out.println(str2.indexOf("1"));
+    System.out.println(str2.indexOf("1"));
   }
 }
 #+END_SRC
 
+#+RESULTS:
+: 3
+: 2
+: 0
+: 0
+: -1
+: 1
+*** str.substring
+#+BEGIN_SRC java :results output :exports both :classname SubStringTest
+public class SubStringTest {
+  public static void main(String[] args) {
+    String str = "abcdefg";                 //
+    System.out.println(str.substring(0,1)); // 0 1 2 3 4 5 6 7
+    System.out.println(str.substring(1,2)); // |a|b|c|d|e|f|g|
+    System.out.println(str.substring(1,4)); // 
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: a
+: b
+: bcd
+*** str.trim
+#+BEGIN_SRC java :results output :exports both :classname TrimTest
+public class TrimTest {
+  public static void main(String[] args) {
+    String str = "        a b c   \t \r \n ";
+    String result = str.trim();
+    System.out.println("->" + result + "<-");
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: ->a b c<-
+*** str.replace
+#+BEGIN_SRC java :results output :exports both :classname ReplaceTest
+public class ReplaceTest {
+  public static void main(String[] args) {
+    String str = "aaaaa";
+    System.out.println(str.replace("aa", "bb"));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: bbbba
+*** str.startsWith str.endsWith
+#+BEGIN_SRC java :results output :exports both :classname StartsEndsWith
+public class StartsEndsWith {
+  public static void main(String[] args) {
+    String str = "abc12345efg";
+    System.out.println(str.startsWith("abc") + " " + str.startsWith("abc12345efgh"));
+    System.out.println(str.endsWith("g") + " " + str.endsWith("efg"));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: true false
+: true true
+*** null
+#+BEGIN_SRC java :results output :exports both :classname NullAndStringTest
+public class NullAndStringTest {
+  public static void main(String[] args) {
+    String str;// = null;
+//    System.out.println(str);
+    str += "null";
+    System.out.println(str);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: null
+: nullnull
+*** StringBuilder
+#+BEGIN_SRC java :results output :exports both :classname SbTest2
+public class SbTest2 {
+  public static void main(String[] args) {
+    StringBuilder sb = new StringBuilder();
+    System.out.println(sb.capacity());
+
+    sb.append(true);
+    sb.append(10);
+    sb.append("bcde", 1, 3); // += cd
+    
+    char array[] = {'h','e','l','l','o'};
+    sb.append(array);
+    System.out.println(sb);
+
+    StringBuilder sb2 = new StringBuilder("1234"); // length + 16
+    System.out.println(sb2.capacity());
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 16
+: true10cdhello
+: 20
+*** Sequence
+#+BEGIN_SRC java :results output :exports both :classname SequenceTest
+public class SequenceTest {
+  public static void main(String[] args) {
+    StringBuilder sb = new StringBuilder(); // 0 1 2 3 4 5
+    sb.insert(0, "abcde");                  // |a|b|c|d|e| -> bcde
+    CharSequence seq = sb.subSequence(1,5); //             0 1 2 3 4
+    String str = new StringBuilder(seq).substring(1,3); // |b|c|d|e| -> cd
+    System.out.println(str);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: cd
+*** ラムダ式
+#+BEGIN_SRC java :results output :exports both :classname LambdaArgTest
+interface Func {
+  String test(String test);
+}
+
+public class LambdaArgTest {
+  public static void main(String[] args) {
+    String val = "A";
+//    Func f = (val) -> val + " " + val; <- エラー: valはすでにメソッドで定義されている
+    Func f = str -> val + " " + " " + str;
+    Func g = str -> {
+//      val += "HOGE"; <- エラー: ラムダ式から参照されるローカル変数は、finalまたは事実上のfinalである必要がある
+      return val + " " + val;
+    };
+
+    System.out.println(f.test("B") + g.test("C"));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: A  BA A
+*** Predicate
+#+BEGIN_SRC java :results output :exports both :classname PredicateTest
+import java.util.function.Predicate;
+
+public class PredicateTest {
+  public static void main(String[] args) {
+    Predicate<String> p = str -> {
+      return "".equals(str);
+    };
+
+    System.out.println(p.test(""));
+    System.out.println(p.test("a"));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: true
+: false
+*** LocalDate DateTime Time
+#+BEGIN_SRC java :results output :exports both :classname LocalTimeTest
+import java.time.LocalTime;
+
+public class LocalTimeTest {
+  public static void main(String[] args) {
+    LocalTime time1 = LocalTime.of(0, 1, 2);
+    LocalTime time2 = time1.plusHours(12);
+    System.out.println(time1); // <- イミュータブル
+    System.out.println(time2);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 00:01:02
+: 12:01:02
+*** DurationとPeriod
+#+BEGIN_SRC java :results output :exports both :classname DurationPeriodTest
+import java.time.*;
+import java.time.format.DateTimeFormatter;
+
+
+public class DurationPeriodTest {
+  public static void main(String[] args) {
+    LocalDateTime startDateTime = LocalDateTime.of(2015,1,1,0,30); // 1/1 00:30
+    LocalDateTime endDateTime   = LocalDateTime.of(2015,1,2,23,0); // 1/2 23:00
+    Duration d = Duration.between(startDateTime, endDateTime);
+
+    // Duration
+    System.out.println(d.toHours()); // 分は見ていない
+    System.out.println(d.toDays());  // 時刻は見ていない
+
+    LocalDate startDate = LocalDate.now();
+    LocalDate endDate   = startDate.plusDays(10);
+    Period x = startDate.until(endDate);
+
+    // Period
+    System.out.println(x.getDays());
+    System.out.println(x.getMonths());
+
+    // 時刻のフォーマット
+//    System.out.println(startDateTime.format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
+//    System.out.println(startDateTime.format(DateTimeFormatter.ISO_INSTANT));
+    System.out.println(startDateTime.format(DateTimeFormatter.BASIC_ISO_DATE));
+    System.out.println(startDateTime.format(DateTimeFormatter.ISO_DATE_TIME));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 46
+: 1
+: 10
+: 0
+: 20150101
+: 2015-01-01T00:30:00
+    
+*** list arraylist
+#+BEGIN_SRC java :results output :exports both :classname ArrayListTest
+import java.util.ArrayList;
+
+public class ArrayListTest {
+  public static void main(String[] args) {
+    ArrayList list1 = new ArrayList<>(); // <- 型変数を指定しない場合、Object型を指定したとみなす
+    list1.add(1);
+    list1.add("string");
+    list1.add(0, 'c');
+    list1.add(list1.size(), 2L);
+    System.out.println(
+      list1.get(0)+" "+list1.get(1)+" "+list1.get(2)+" "+list1.get(3)
+    );
+    try {
+      list1.add(100, 2L);
+    } catch(Exception e) {
+      System.out.println(e);
+    }
+
+    list1.remove("string");
+    System.out.println(
+      list1.get(0)+" "+list1.get(1)+" "+list1.get(2)
+    );
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: c 1 string 2
+: java.lang.IndexOutOfBoundsException: Index: 100, Size: 4
+: c 1 2
+
+- リストから要素を削除した場合、後ろの要素が繰り上がる
+  | A | B | C | D |
+  |---+---+---+---|
+  | A | C | D |   | 
+  |---+---+---+---| 
+*** removeIf
+#+BEGIN_SRC java :results output :exports both :classname RemoveIfTest
+import java.util.*;
+
+public class RemoveIfTest {
+  public static void main(String[] args) {
+    // List<Integer> list = Arrays.asList(1,2,3,4,5,6,7,8,9,10); 固定長だとremoveIfできない
+    List<Integer> list = new ArrayList(Arrays.asList(1,2,3,4,5,6,7,8,9,10));
+    list.removeIf(n ->  n % 3 == 0);
+    list.forEach(s -> System.out.println(s));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 1
+: 2
+: 4
+: 5
+: 7
+: 8
+: 10
+
+* テンプレート 
+#+BEGIN_SRC java :results output :exports both :classname 
+public class {
+  public static void main(String[] args) {
+  }
+}
+#+END_SRC
+
+#+RESULTS:
