@@ -1,6 +1,7 @@
-* TODO 受験の準備
+
+* 受験の準備
   https://takakisan.com/java-certification-silver-application/
-* TODO ピアソンVUEのアカウントのパスワード
+* ピアソンVUEのアカウントのパスワード
 * 練習問題 <2019-09-02 月>
  https://javattemiru.com/category/java-silver%E7%B7%B4%E7%BF%92%E5%95%8F%E9%A1%8C/
 ** 2
