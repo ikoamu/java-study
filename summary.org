@@ -214,3 +214,34 @@ public class PrintlnTest {
 : 8後方に文字列
 : 先頭に文字列28
 : 10後方に文字列
+** 抽象クラス
+#+BEGIN_SRC java :results output :exports both :classname AbstractMethodTest
+public class AbstractMethodTest extends AbstractClass {
+
+  protected void test(){
+    System.out.println("OK");
+  }
+// private void test(){} -> (protected)より弱いアクセス権限を割り当てるとコンパイルエラー
+
+  public static void main(String[] args) {
+    new AbstractMethodTest().test();
+    test2();
+  }
+}
+
+abstract class AbstractClass {
+
+// protected void test(); メソッド本体がない -> abstractで修飾しなければならない（コンパイルエラー）
+  protected abstract void test();
+
+//  private static abstract void test2(); 修飾子~abstract~と ~private~ の組合せは不正（コンパイルエラー）
+//  static abstract void test2();         修飾子~abstract~と ~static~ の組合せは不正（コンパイルエラー）
+  static void test2() {
+    System.out.println("OK!");
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: OK
+: OK!
