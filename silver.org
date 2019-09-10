@@ -651,7 +651,18 @@ public class ArrayCopyTest {
                1,        // コピー元の先頭を指定（0が一番前）
       charArray2,        // コピー先
                0,        // コピー先のどこからコピーを開始するか
-      charArray2.length - 2 // コピー先のどこまででコピーを終えるか
+      charArray2.length - 2 // コピーする要素数
+    );
+    for (char c : charArray2) {
+      System.out.println(c);
+    }
+
+    System.arraycopy(
+      charArray1,        // コピー元
+               0,        // コピー元の先頭を指定（0が一番前）
+      charArray2,        // コピー先
+               0,        // コピー先のどこからコピーを開始するか
+               3         // コピーする要素数
     );
     for (char c : charArray2) {
       System.out.println(c);
@@ -663,8 +674,12 @@ public class ArrayCopyTest {
 #+RESULTS:
 : b
 : c
-: \0
-: \0
+: 
+: 
+: a
+: b
+: c
+: 
 ** 第5章 <2019-09-03 火>
 *** forループの構文
 #+BEGIN_SRC java :results output :exports both :classname ForLoopTest

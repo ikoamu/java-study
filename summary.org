@@ -1,4 +1,4 @@
-* 第11章 <2019-09-09 月>
+* 総仕上げ問題 <2019-09-09 月>
 ** フィールドの初期値
  #+BEGIN_SRC java :results output :exports both :classname DefaultFieldsValue
  public class DefaultFieldsValue {
@@ -10,12 +10,20 @@
    static boolean f;
 
    public static void main(String[] args) {
+     int x;
+     String y;
+     boolean z;
+
      System.out.println(a);
      System.out.println(b);
      System.out.println(c);
      System.out.println(d);
      // System.out.println(e);
      System.out.println(f);
+
+     // System.out.println(x); ローカル変数は初期化しないとコンパイルエラー
+     // System.out.println(y);
+     // System.out.println(z);
    }
  }
  #+END_SRC
@@ -58,17 +66,51 @@ public class KakuForLoopTest {
         System.out.println(b); // a[1][2], a[1][3]は null で拡張for文では回らない
       }
     }
+
+    int b[] = new int[5];
+    b[0] = 0;
+    b[1] = 200;
+    for(int i : b) {
+      System.out.println(i); // 値を格納していない場合 0
+    }
+
+    String[] c = new String[3];
+    c[0] = "hoge";
+    c[1] = "fuga";
+    for(String i : c) {
+      System.out.println(i); // 値を格納していない場合 null
+    }
+
+    boolean f[] = new boolean[3];
+    f[0] = true;
+    f[1] = true;
+    for(boolean i : f) {
+      System.out.println(i); // 値を格納していない場合 false
+    }
   }
 }
 #+END_SRC
 
 #+RESULTS:
-: 1
-: 2
-: 3
-: 4
-: 5
-: 6
+#+begin_example
+1
+2
+3
+4
+5
+6
+0
+200
+0
+0
+0
+hoge
+fuga
+null
+true
+true
+false
+#+end_example
 ** LocalDate
 #+BEGIN_SRC java :results output :exports both :classname LocalDateTest
 import java.time.*;
@@ -245,3 +287,180 @@ abstract class AbstractClass {
 #+RESULTS:
 : OK
 : OK!
+** ポリモーフィズムの利点
+   - 動的なコード
+   - 再利可能
+** 文字列の連結
+#+BEGIN_SRC java :results output :exports both :classname ConcatTest
+public class ConcatTest {
+  public static void main(String[] args) {
+    String a = "A";
+    a.concat("B");
+    System.out.println(a); // StringはイミュータブルであるためBは連結されていない
+    a = a.concat("C");
+    System.out.println(a);
+
+    String b = "   A  ";
+    b.trim();
+    System.out.println(b);
+    b = b.trim();
+    System.out.println(b);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: A
+: AC
+:    A  
+: A
+** キャスト
+#+BEGIN_SRC java :results output :exports both :classname CastTest
+public class CastTest {
+  public static void main(String[] args) {
+    int a = 1;
+    short b = 1;
+    double c;
+    String f = "->";
+
+    c = (double) a + b;
+    System.out.println(c);
+
+    // f = (String) c; doubleをStringに変換できない
+    // f = (String) a; intをStringに変換できない
+    // System.out.println(a);
+
+    long g = (long) a + b;
+    // f = (String) g; longをStringに変換できない
+    // System.out.println(g.toString()); longは間接参照できない
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 2.0
+** Boolean
+#+BEGIN_SRC java :results output :exports both :classname BooleanTest
+public class BooleanTest {
+  public static void main(String[] args) {
+    // valueOfとparseBooleanには大文字小文字は関係ない
+    Boolean b = Boolean.valueOf("TRUE");
+    System.out.println(b);
+    b = Boolean.parseBoolean("tRue");
+    System.out.println(b);
+
+    System.out.println(Boolean.valueOf(true));
+    System.out.println(Boolean.valueOf("false"));
+    System.out.println(Boolean.valueOf("f"));
+
+    System.out.println(Boolean.parseBoolean("FalsEa"));
+    System.out.println(Boolean.parseBoolean(""));
+    System.out.println(Boolean.parseBoolean(null));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: true
+: true
+: true
+: false
+: false
+: false
+: false
+: false
+** 暗黙の型変換
+#+BEGIN_SRC java :results output :exports both :classname TypeConvTest
+public class TypeConvTest {
+  public static void main(String[] args) {
+    int a = 1;
+    longOrShort(a); // <- intだとlongになる
+    longOrShort((short)a);
+  }
+
+  private static void longOrShort(short a) {
+    System.out.println("short");
+  }
+
+  private static void longOrShort(long a) {
+    System.out.println("long");
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: long
+: short
+** switch
+#+BEGIN_SRC java :results output :exports both :classname PrintlnTest
+public class PrintlnTest {
+  public static void main(String[] args) {
+    int a = 2;
+    switch(a) {
+      default: // defaultは一番上でもOK（aが1,2,3以外であれば DABCと出力される）
+        System.out.println("D");
+      case 1:
+        System.out.println("A");
+      case 2:
+        System.out.println("B");
+      case 3:
+        System.out.println("C");
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: B
+: C
+* 覚える
+** コンパイルエラー
+   - インターフェイスのメソッドを実装するときに、アクセス修飾子が変更されていることでのコンパイルエラー
+   - staticなメソッドでstaticでないフィールドを使っていることでのコンパイルエラー
+   - ラムダ式内で定義した変数を式外で使っていることでのコンパイルエラー
+     #+BEGIN_SRC java
+     if(list.removeIf(String s) -> {return s.length() == 5;}) {
+       System.out.println(s); // ここで変数sは使えない
+     }
+     #+END_SRC
+     (~removeIf()~ は削除ができれば ~true~ を返す)
+** 例外
+   - 要素にnullが含まれる配列をforで回すときに、 ~null.name~ などで ~NullPointerexception~ が投げられる場面
+   - 例外に関する説明
+     #+BEGIN_SRC example
+     - ~RuntimeException~ クラスのすべてのサブクラスはキャッチもしくはthrow宣言をしなくてもよい
+     - ~RuntimeException~ クラスを除く、 ~Exception~ クラスのすべてのサブクラスは検査例外である
+     - ~catchブロック~ 内のパラメータは ~Throwable~ 型である
+     - ~RuntimeException~ クラスのすべてのサブクラスは復旧可能である
+     - ~Error~ クラスは非検査例外であり、プログラムから復帰できないような例外を表すクラスである
+     - すべての例外（検査例外、非検査例外）は ~throws~ で宣言して、再スロー可能である
+     #+END_SRC
+** 型変換
+   - ~int~ から ~long~ は暗黙の型変換ができる -> キャスト不要
+   - ~int~ から ~char~ はキャスト必要
+   - ~97~ は char型に変換すると ~a~ 、 ~98~ は ~b~ となる
+** コンストラクタ
+   OK   : ~new Sample().test();~
+   ERROR: ~new Sample.test();~
+** StringBuilderのappendと参照型
+#+BEGIN_SRC java :results output :exports both :classname SbAppendTest
+public class SbAppendTest {
+  public static void main(String[] args) {
+    StringBuilder sb = new StringBuilder("A");
+    System.out.println(sb);
+    Sample.sample(sb);
+    System.out.println(sb); // <- sb = sb.append("A"); とかしなくてよい（String型とは違う）
+  }
+}
+
+class Sample {
+  static void sample(StringBuilder sb) {
+    sb.append(sb);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: A
+: AA
+
