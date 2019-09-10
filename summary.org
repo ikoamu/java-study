@@ -427,14 +427,12 @@ public class PrintlnTest {
 ** 例外
    - 要素にnullが含まれる配列をforで回すときに、 ~null.name~ などで ~NullPointerexception~ が投げられる場面
    - 例外に関する説明
-     #+BEGIN_SRC example
      - ~RuntimeException~ クラスのすべてのサブクラスはキャッチもしくはthrow宣言をしなくてもよい
      - ~RuntimeException~ クラスを除く、 ~Exception~ クラスのすべてのサブクラスは検査例外である
      - ~catchブロック~ 内のパラメータは ~Throwable~ 型である
      - ~RuntimeException~ クラスのすべてのサブクラスは復旧可能である
      - ~Error~ クラスは非検査例外であり、プログラムから復帰できないような例外を表すクラスである
      - すべての例外（検査例外、非検査例外）は ~throws~ で宣言して、再スロー可能である
-     #+END_SRC
 ** 型変換
    - ~int~ から ~long~ は暗黙の型変換ができる -> キャスト不要
    - ~int~ から ~char~ はキャスト必要
