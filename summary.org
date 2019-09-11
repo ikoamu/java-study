@@ -625,3 +625,44 @@ public class Bool {
 : 10
 : 11
 : 12
+** 継承関係とフィールド
+   - フィールドを参照した場合は、変数の型で宣言された方を使う
+   - メソッドを呼び出した場合は、メソッド内の指示に従う
+#+BEGIN_SRC java :results output :exports both :classname ParentAndChild
+public class ParentAndChild {
+  public static void main(String[] args) {
+    Parent b = new Child1();
+    Parent c = new Child2();
+    System.out.println("field -> " + b.val); // 親のフィールドを参照
+    System.out.println("field -> " + c.val); // 親のフィールドを参照
+    b.print(); // printをOverrideしているので、Child1のメソッド（フィールドも）が呼ばれる
+    c.print(); // printをOverrideしていないので、Parentのメソッド（フィールドも）が呼ばれる
+  }
+}
+
+class Parent {
+  String val = "親";
+  void print() {
+    System.out.println(val);
+  }
+}
+
+class Child1 extends Parent {
+  String val = "子1";
+  
+  @Override
+  void print() {
+    System.out.println(val);
+  }
+}
+
+class Child2 extends Parent {
+  String val = "子2";
+}
+#+END_SRC
+
+#+RESULTS:
+: field -> 親
+: field -> 親
+: 子1
+: 親
