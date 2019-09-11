@@ -567,3 +567,31 @@ class Sample {
 : abc
 : aXc
 : aXc
+** List
+Listインターフェイスを実装したクラスは ~null~ を許容する
+#+BEGIN_SRC java :results output :exports both :classname ListAndArray
+import java.util.*;
+
+public class ListAndArray {
+  public static void main(String[] args) {
+    List<String> list = new ArrayList<>();
+
+    System.out.println(list.size());
+    list.add(null);
+    System.out.println(list.size());
+    list.add(null);
+    System.out.println(list.size());
+    list.add("a");
+    System.out.println(list.size());
+
+    System.out.println(list);
+  }
+}
+#+END_SRC
+~null~ を追加してもサイズはカウントされる(要素のひとつとして扱われる)
+#+RESULTS:
+: 0
+: 1
+: 2
+: 3
+: [null, null, a]
