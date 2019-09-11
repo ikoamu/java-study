@@ -666,3 +666,30 @@ class Child2 extends Parent {
 : field -> 親
 : 子1
 : 親
+** 継承と実装
+#+BEGIN_SRC java :results output :exports both :classname EmpTest
+interface Worker {
+  void work();
+}
+
+class Emp {
+  public void work() {
+    System.out.println("work");
+  }
+}
+
+class Engnr extends Emp implements Worker {
+  // EngnrはEmpを継承しているのでworkメソッド（シグニチャも同じ）を持っている
+  // -> Workerインターフェイスに規定されたメソッドを実装したと解釈される
+}
+
+public class EmpTest {
+  public static void main(String[] args) {
+    Worker worker = new Engnr();
+    worker.work();
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: work
