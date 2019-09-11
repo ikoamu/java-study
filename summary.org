@@ -493,3 +493,77 @@ class Sample {
      - ~test(list, (Sample s) -> {s.num > 100});~ 
 
        -> 中括弧を使う場合、 ~return~ は省略できない
+** arraycopy
+#+BEGIN_SRC java :results output :exports both :classname ArrayCopy
+public class StringArrayCopy {
+  public static void main(String[] args) {
+    String[] array1 = {"a", "b", "c", "d"};
+    String[] array2 = new String[array1.length];
+    System.arraycopy(array1, 0, array2, 0, array1.length);
+    
+    print(array1, array2);
+    
+    array2[1] = "X"; // array2[1] を"X"を代入する
+    print(array1, array2);
+   }
+
+  private static void print(String[] array1, String[] array2) {
+    for (String s : array1) {
+      System.out.print(s);
+    }
+    System.out.println();
+
+    for (String s : array2) {
+      System.out.print(s);
+    }
+    System.out.println();
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: abcd
+: abcd
+: abcd
+: aXcd
+#+BEGIN_SRC java :results output :exports both :classname SampleArrayCopy
+public class SampleArrayCopy {
+  public static void main(String[] args) {
+    Sample[] array1 = {
+      new Sample("a"), new Sample("b"), new Sample("c")
+    };
+    Sample[] array2 = new Sample[array1.length];
+    System.arraycopy(array1, 0, array2, 0, array1.length);
+    
+    print(array1, array2);
+    
+    array2[1].name = "X";  // array2[1]に格納されているインスタンスのフィールドを変更する
+    print(array1, array2); // array1も同じインスタンスを参照しているので、フィールドがXとして出力される（当たり前）
+  }
+
+  private static void print(Sample[] array1, Sample[] array2) {
+    for (Sample s : array1) {
+      System.out.print(s.name);
+    }
+    System.out.println();
+
+    for (Sample s : array2) {
+      System.out.print(s.name);
+    }
+    System.out.println();
+  }
+}
+
+class Sample {
+  String name;
+  public Sample(String name) {
+    this.name = name;
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: abc
+: abc
+: aXc
+: aXc
