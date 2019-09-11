@@ -595,3 +595,33 @@ public class ListAndArray {
 : 2
 : 3
 : [null, null, a]
+** ~&&~ ~||~
+#+BEGIN_SRC java :results output :exports both :classname Bool
+public class Bool {
+  public static void main(String[] args) {
+    int a = 10;
+
+    // 左側がfalseなので a++ < 0 を評価しない -> インクリメントされない
+    if(a > 100 && a++ < 0) {}
+    System.out.println(a);
+    
+    // 左側がtrueなので a++ > 0 を評価しない -> インクリメントされない
+    if(a > 0 || a++ > 0) {}
+    System.out.println(a);
+
+     // 左側がfalseでも a++ < 0 を評価する -> インクリメントされる
+    if(a > 100 & a++ < 0) {}
+    System.out.println(a);
+    
+    // 左側がtrueでも a++ > 0 を評価する -> インクリメントされる
+    if(a > 0 | a++ > 0) {}
+    System.out.println(a);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 10
+: 10
+: 11
+: 12
