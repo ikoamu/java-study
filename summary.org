@@ -424,6 +424,26 @@ public class PrintlnTest {
      }
      #+END_SRC
      (~removeIf()~ は削除ができれば ~true~ を返す)
+   - ローカル変数の初期化
+#+BEGIN_SRC java :results output :exports both :classname LocalVariableTest
+public class LocalVariableTest {
+  static double X;  
+
+  public static void main(String[] args) {
+    double a, b, c;
+    if(X == 0.0) { 
+      a = 1.0;
+      b = 2.0;
+      c = 3.0;
+    } // else {
+      // a = 1.0;
+      // b = 2.0;
+      // c = 3.0;
+    　// }
+     System.out.println(a * b * c); // <- 初期化されない可能性がある（コンパイルエラー）
+  }
+}
+#+END_SRC
 ** 例外
    - 要素にnullが含まれる配列をforで回すときに、 ~null.name~ などで ~NullPointerexception~ が投げられる場面
    - 例外に関する説明
@@ -461,4 +481,11 @@ class Sample {
 #+RESULTS:
 : A
 : AA
-
+** ラムダ式
+   - よく間違えるもの
+     - ~test(list, () -> s.num > 100);~ 
+       -> ~()~ 内で ~s~ を宣言していない
+     - ~test(list, Sample s -> s.num > 100);~ 
+       -> ~()~ を省略する場合、 データ型を記述してはいけない（ ~(Sample s)~ ならOK ）
+     - ~test(list, (Sample s) -> {s.num > 100});~ 
+       -> 中括弧を使う場合、 ~return~ は省略できない
