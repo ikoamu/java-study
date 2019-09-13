@@ -1,0 +1,68 @@
+* 第1章 Javaのクラス設計
+<2019-09-13 金>
+** ポリモーフィズム
+   - 具体的な動作はメソッドのオーバーライドによって実現される
+
+     (オーバーライドによる動的ポリモーフィズム)
+*** is-a関係
+    - インターフェイスの実装
+    - クラス及びインターフェイスの継承
+** オーバライド
+*** アノテーション
+#+BEGIN_SRC java :results output :exports both :classname OverrideAnotation
+  public class OverrideAnotation {
+    public static void main(String[] args) {
+      Parent p = new Child();
+      p.test();
+    }
+  }
+
+  class Parent {
+    void test() {
+      System.out.println("Parent");
+    }
+
+    Parent test2() {
+      return new Parent();
+    }
+
+    Parent test2(Parent p) {
+      return p;
+    }
+  }
+
+  class Child extends Parent {
+    @Override
+    protected void test() {
+      System.out.println("Child");
+    }
+
+    // オーバーライドアノテーションを付与しているが、
+    // 該当するメソッドがないので、コンパイルエラー（シグニチャが異なる）
+    // @Override
+    // void test(String a) {
+    //   System.out.println(a);
+    // }
+
+    // 返り値がParentじゃなくてもOK
+    @Override
+    Child test2() {
+      return new Child();
+    }
+
+    // 引数はだめ（コンパイルエラー）
+    // @Override
+    // Child test2(Child c) {
+    //   return c;
+    // }
+  }
+#+END_SRC
+
+#+RESULTS:
+: Child
+** finalキーワード
+   | 対象                                | 意味               |
+   |-------------------------------------+--------------------|
+   | finalクラス                         | 継承不可           |
+   | final変数（フィールド及びローカル） | 再代入不可（定数） |
+   | finalメソッド                       | オーバーライド不可 |
