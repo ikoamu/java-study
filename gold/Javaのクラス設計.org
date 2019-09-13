@@ -83,3 +83,65 @@
      - 継承されないように ~final~ 宣言する
 **** すべてのフィールド
      - 継承されないようにfinal宣言する ~private final~ 宣言する
+**** アクセサリメソッド
+     - ゲッターメソッドのみ提供し、フィールド値を設定できるようなメソッドを提供しない
+     - 配列やコレクションといった可変コンテナクラス（保持する要素を変更可能なクラス）や
+     可変クラスへの参照を外部に公開しないようにする
+     - ~this~ 参照を外部に公開しないようにする
+** インターフェイス
+   - Java8から実装を提供する ~defaultメソッド~ と、 ~staticメソッド~ を宣言できるようになった
+*** staticメソッド
+#+BEGIN_SRC java :results output :exports both :classname StaticInterfaceMethod
+public class StaticInterfaceMethod {
+  public static void main(String[] args) {
+    Foo.x();
+    Bar b = new Bar();
+    // b.x();  <- Fooを実装したクラスのインスタンスからstaticメソッドは呼び出せない
+    // Bar.x() <- Fooを実装したクラスからstaticメソッドは呼び出せない
+  }
+}
+
+interface Foo {
+  static void x() {
+    System.out.println("staticメソッド");
+  }
+}
+
+class Bar implements Foo {
+}
+
+#+END_SRC
+
+#+RESULTS:
+: staticメソッド
+*** defaultメソッド
+#+BEGIN_SRC java :results output :exports both :classname DefaultInterfaceMethod
+public class DefaultInterfaceMethod {
+  public static void main(String[] args) {
+    Bar b = new Bar();
+    b.x();
+    b.y();
+  }
+}
+
+interface Foo {
+  default void x() {
+    System.out.println("default of x");
+  }
+
+  default void y() {
+    System.out.println("default of y");
+  }
+}
+
+class Bar implements Foo {
+  public void x() {  // <- publicにしなければコンパイルエラー
+    System.out.println("X!");
+  }
+}
+
+#+END_SRC
+
+#+RESULTS:
+: X!
+: default of y
