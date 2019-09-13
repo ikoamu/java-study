@@ -145,3 +145,98 @@ class Bar implements Foo {
 #+RESULTS:
 : X!
 : default of y
+**** 同じdefaultメソッドを持つ複数のインターフェイスを実装するとコンパイルエラー
+#+BEGIN_SRC java :results output :exports both :classname ExDefaultMethodError
+public class ExDefaultMethodError {
+  public static void main(String[] args) {
+    new ExClass().x();
+  }
+}
+interface Foo {
+  default void x() {
+    System.out.println("1");
+  }
+}
+interface Bar {
+  default void x() {
+    System.out.println("2");
+  }
+}
+class ExClass implements Foo, Bar {
+  // オーバーライドすることでエラー回避
+  @Override
+  public void x() {
+    System.out.println("3");
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 3
+**** 菱形継承
+#+BEGIN_SRC java :results output :exports both :classname ExDefaultMethodError2
+public class ExDefaultMethodError2 implements A, B {
+  public static void main(String[] args) {
+    new ExDefaultMethodError2().x(); // <- 距離が近い方のdefaultメソッドが呼ばれる
+  }
+}
+
+interface A {
+  default void x() {
+    System.out.println("1");
+  }
+}
+
+interface B extends A {
+  default void x() {
+    System.out.println("2");
+  }
+}
+
+interface C extends A {
+}
+#+END_SRC
+
+#+RESULTS:
+: 2
+** 入れ子クラス（Nested Class）
+   - あるブロック内 ~{}~ で宣言されたクラス
+#+BEGIN_SRC java :results output :exports both :classname ExNestedClass
+public class ExNestedClass {
+  static class X {  // <- 小文字でclass
+  }
+  private class Y { // <- 小文字でclass
+  }
+  public static void main(String[] args) {
+    class Z {} // <- 小文字でclass
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: X
+#+BEGIN_SRC java :results output :exports both :classname ExNestedClass2
+public class ExNestedClass2 {
+  public static void main(String[] args) {
+    new Outer().new Inner1().doIt();
+    new Outer().Inner2.doIt();
+  }
+}
+
+class Outer {
+  class Inner1 {
+    public void doIt() {
+      System.out.println("Inner1");
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: Inner1
+** 匿名クラス（Anonymous Class）
+#+BEGIN_SRC java
+new 型名() {
+  メソッドの実装
+}
+#+END_SRC
