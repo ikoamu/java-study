@@ -15,24 +15,105 @@
    - ~Foo<T>~ のインスタンスを生成する場合
      - ~○~ ~Foo<String> foo = new Foo<String>()~
      - ~○~ ~Foo<Object[]> foo = new Foo<>()~
+
        インスタンス生成における型引数の記述を省略できる
      - ~×~ ~Foo<String> foo = new Foo<>(){}~
        匿名クラスの場合は記述の省略ができない
+
        （ ~Foo<String> foo = new Foo<String>(){}~ はOK）
      - ~×~ ~Foo<int[]> foo = new Foo<>()~
        プリミティブ型はダメ
-** 5 
-   - ジェネリクス・クラスで記述出来ないコード
+** 5
+*** ジェネリクス・クラスで記述出来ないコード
      - ~static~ 修飾子付きの型変数
+
        ~ex.~ ~static T t;~
      - 型変数によるインスタンス生成
+
        ~ex.~ ~T obj = new T();~
      - 型変数を要素に指定する配列の生成
-       ~ex.~ ~T[] = new T[3];~       
+
+       ~ex.~ ~T[] = new T[3];~
+
      - ~instanceof~ 演算子による型の判定
+
+       ~ex.~
+
        #+BEGIN_SRC java
        void doIt(T t) {
-         
+         if(t instanceof T) {
+	   /* some code here */
+	 }
+       }
        #+END_SRC
      - 型変数に対する ~.class~ の参照
 
+       ~ex.~
+
+       #+BEGIN_SRC java
+       void doIt() {
+         Class<T> klass = T.class;
+       }
+       #+END_SRC
+*** できる記述
+    - ~T t;~
+    - 
+      #+BEGIN_SRC java
+      void doIt() {
+        /* some code here */
+	return t;
+      }
+      #+END_SRC
+** 6
+   - ジェネリック・メソッドの宣言
+     - ~<T> void doIt() {}~
+       - 戻り値の記述の前で型パラメータを宣言する必要がある
+       - ~<型パラメータ> 戻り値型 メソッド名(引数リスト) {}~
+     - ※ ジェネリック・メソッドで宣言されている型変数はそのメソッド以外で参照することは出来ない
+*** メソッド引数の型宣言に型変数 ~T~ を使用するジェネリック・メソッド
+    #+BEGIN_SRC java
+    class Foo {
+      <T> void doIt(T t) {
+        // some code here
+      }
+    }
+    #+END_SRC
+*** 戻り値の型宣言に型引数 ~T~ を使用するジェネリック・メソッド
+    #+BEGIN_SRC java
+    class Foo {
+      <T> T doIt() {
+        // some code here
+      }
+    }
+    #+END_SRC
+** 7
+   - 型境界
+     - 型変数が取り得る型に制約を課す事ができる
+     - ~class Foo<T extends Number> {}~
+       #+BEGIN_SRC java
+       // OK
+       Foo<Number>  f1 = new Foo<Number>();
+       Foo<Integer> f2 = new Foo<Integer>();
+       Foo<Double>  f3 = new Foo<Double>();
+       
+       // コンパイルエラー
+       Foo<Object> f4 = new Foo<Object>();
+       Foo<String> f5 = new Foo<String>();
+       #+END_SRC
+
+     - ~class Foo<T, U extends T> {}~
+       #+BEGIN_SRC java
+       class X {}
+       class Y extends X {}
+       class Z extends X {}
+       #+END_SRC
+
+       #+BEGIN_SRC java
+       // OK
+       Foo<X, Y> f1 = new Foo<X, Y>();
+       Foo<X, Z> f2 = new Foo<X, Z>();
+       
+       // コンパイルエラー
+       Foo<Y, Z> f3 = new Foo<Y, Z>();
+       Foo<Z, X> f4 = new Foo<Z, X>();
+       #+END_SRC
