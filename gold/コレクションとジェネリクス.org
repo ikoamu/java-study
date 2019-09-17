@@ -117,3 +117,89 @@
        Foo<Y, Z> f3 = new Foo<Y, Z>();
        Foo<Z, X> f4 = new Foo<Z, X>();
        #+END_SRC
+** 8
+#+BEGIN_SRC java
+public class A {}
+public class B extends A {}
+public class C extends B {}
+public class X<T> {}
+
+void doIt(X<? super B> obj) {}
+#+END_SRC
+  - 上記のようなメソッドを呼び出すコード
+    - ~doIt(new X<A>())~
+    - ~doIt(new X<B>())~
+    - ~doIt(new X<Object>()~
+  - ~?~ ワイルドカード
+    何らかの型という意味（変数宣言時の時点では型引数に指定される方は未定であることを表す）
+    - 型境界の設定
+      - ~<? extends T>~
+        型境界の上限をT型に設定
+      - ~<? super T>~
+        型境界の下限をT型に設定
+      - ~<?>~
+        境界なしワイルドカード( ~<? extends Object>~ と同じ)
+
+** 9
+#+BEGIN_SRC java
+public class Foo<T> {}
+#+END_SRC
+  - 上記のようなクラスを継承するクラス
+#+BEGIN_SRC java
+// OK
+class Bar extends Foo<String> {}
+class Bar<T> extends Foo<Integer> {}
+class Bar<T> extends Foo<T> {} // TはBar側で指定できるためエラーとならない
+
+// コンパイルエラー
+class Bar extends Foo<T> {} // Foo<T> クラスの型変数に対して型引数を指定していない
+#+END_SRC
+  - 総称型を実装または継承する場合、その総称型をパラメータ化(型引数を指定する)必要がある
+** 10
+   - java.util.List<E>
+     - インデックスによって順序付けられるデータ構造を表すコレクション・インターフェイス
+** 11
+   - ArrayList
+     - 要素に対するランダムアクセスが高速
+     - 追加する要素が先頭に近いほどパフォーマンスが劣化する
+       (すべての要素をコピーした後に新しい配列を生成する必要があるため)
+   - LinkedList
+     - ランダムアクセスはArrayListに比べてパフォーマンスが悪い
+     - 先頭や末尾に要素を追加するため、ArrayListよりも優れている
+** 12
+   - Array.asList
+     - Listオブジェクトを生成する
+     - ArrayListと互換性はない
+       - 以下はコンパイルエラーとなる
+#+BEGIN_SRC java
+ArrayList<Integer> list = Arrays.asList(1, 2, 3);
+ArrayList list = (ArrayList<Integer>) Arrays.asList(1, 2, 3);
+#+END_SRC         
+** 14
+   - Queue
+     - First-In First-Out
+** 15
+   - Deque
+     - Queue<E>インターフェイスのサブインターフェイス
+     - 両端から要素を挿入、削除できるデータ構造を表現する
+     - インデックスによる要素へのアクセスはサポートしていない
+** 16
+   - ArrayDeque
+     - 内部で配列を使用したDequeインターフェイスの実装
+     - FIFOとして用いる場合、LinkedListよりも高速
+     - LIFOとして用いる場合、Stackよりも高速
+     - スレッドセーフではない（Stackはスレッドセーフ）
+     - nullは格納できない
+** 17
+   - Set
+     - 重複を持たないことを保証するコレクション・インターフェイス
+       - 重複 = ~equal~ メソッドによって等しいと判断された複数の要素
+     - nullもユニークな要素のひとつ
+** 18
+   - Setインターフェイスの代表的な実装クラス
+     - HashSet
+       - 要素の管理にハッシュテーブルを使用している
+     - TreeSet
+       - 木構造に基づく実装であり、要素の順序付をサポートする
+     - SortedSet
+       - 順序付されたSet
