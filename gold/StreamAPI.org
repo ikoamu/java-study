@@ -31,6 +31,7 @@ public class Foo {
 : java.lang.IllegalStateException: stream has already been operated upon or closed
 
    - 一度も中間操作を適応せずに終端操作を適用してもよい
+     
      ストリーム・パイプラインは ~0以上の中間操作~ と ~１つの終端操作~ から構成される
 ** ~stream()~
    - データソースとしてListやMapなどのコレクションをストリーム・オブジェクトに変換する
@@ -51,6 +52,7 @@ public class Foo {
 ** Mapインターフェイスの ~forEach~
    - Map<K,V>インターフェイスはCollection<E>インターフェイスを継承していない
    - Mapインターフェイスの自体にあるforEachを使用する
+     
      ~default void forEach(BiConsumer<? super K, ? super V> action)~
      - BiConsumerオブジェクトを渡す必要がある
        - 引数は２つ宣言しなければいけない
@@ -105,3 +107,83 @@ public class Foo {
 : 2
 : 3
 : 4
+** mapとmapToInt
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.util.*;
+import java.util.stream.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    // IntStream -> map()
+    IntStream.rangeClosed(1, 4)
+    .map(n -> n * 2).forEach(System.out::println);
+
+    // Stream<Integer> -> mapToInt
+    List<Integer> list = Arrays.asList(1,2,3,4);
+    list.stream()
+    .mapToInt(n -> n * 2).forEach(System.out::println);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 2
+: 4
+: 6
+: 8
+: 2
+: 4
+: 6
+: 8
+** sort
+*** ~sorted()~
+    自然順序に従ってソート
+ #+BEGIN_SRC java :results output :exports both :classname Foo
+ import java.util.*;
+ import java.util.stream.*;
+
+ public class Foo {
+   public static void main(String[] args) {
+     System.out.println("数字");
+     Arrays.asList(2, 3, 1).stream().sorted()
+     .forEach(System.out::println);
+
+     System.out.println("数字と文字");
+      Arrays.asList("2", "Z", "A", "あ", "1").stream().sorted()
+     .forEach(System.out::println);
+   }
+ }
+ #+END_SRC
+
+ #+RESULTS:
+ #+begin_example
+ 数字
+ 1
+ 2
+ 3
+ 数字と文字
+ 1
+ 2
+ A
+ Z
+ あ
+ #+end_example
+*** ~sorted(Comparator<? super T> c)~
+    #+BEGIN_SRC java :results output :exports both :classname Foo
+ import java.util.*;
+ import java.util.stream.*;
+
+ public class Foo {
+   public static void main(String[] args) {
+     System.out.println("降順にソート");
+     Arrays.asList(2, 3, 1).stream().sorted((i,j) -> j - i) // 2 - 3 = -1
+     .forEach(System.out::println);                         // 3 - 1 = 2
+   }                                                        // 3 - 2 = 1  プラス＝＞前に
+ }
+ #+END_SRC
+
+ #+RESULTS:
+ : 降順にソート
+ : 3
+ : 2
+ : 1
