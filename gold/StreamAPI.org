@@ -1,1 +1,107 @@
 * StreamAPI
+** StreamAPIについて
+   - 関数型インターフェイスやラムダ式を活用する設計となっている
+   - 並列で実行するための仕組みをサポートしている
+   - ストリームに対する中間操作は常に遅延評価となる
+   - 終端操作を実行したストリームを再度利用することはできない
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.util.*;
+import java.util.stream.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    int[] array = {1, 2, 3, 4};
+    IntStream stream = Arrays.stream(array);
+    stream.forEach(System.out::println);
+    try {
+     // forEachをもう一度行う 
+     stream.forEach(str -> System.out.println(str));
+    } catch(Exception e) {
+      System.out.println(e);
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 1
+: 2
+: 3
+: 4
+: java.lang.IllegalStateException: stream has already been operated upon or closed
+
+   - 一度も中間操作を適応せずに終端操作を適用してもよい
+     ストリーム・パイプラインは ~0以上の中間操作~ と ~１つの終端操作~ から構成される
+** ~stream()~
+   - データソースとしてListやMapなどのコレクションをストリーム・オブジェクトに変換する
+     
+     メソッド定義
+     #+BEGIN_SRC java
+     default Stream<E> stream()
+     #+END_SRC
+     例
+     #+BEGIN_SRC java
+     List<String> list = Arrays.asList("A","B","C");
+     Stream<String> stream = list.stream();
+     
+     // 存在しないメソッド
+     // Stream<String> stream = list.toStream();
+     // Stream<String> stream = list.getStream();
+     #+END_SRC
+** Mapインターフェイスの ~forEach~
+   - Map<K,V>インターフェイスはCollection<E>インターフェイスを継承していない
+   - Mapインターフェイスの自体にあるforEachを使用する
+     ~default void forEach(BiConsumer<? super K, ? super V> action)~
+     - BiConsumerオブジェクトを渡す必要がある
+       - 引数は２つ宣言しなければいけない
+       - 引数２つなので、メソッド参照は使えない
+** ~Arrays.stream()~
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.util.*;
+import java.util.stream.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    //             0  1  2  3  4  5
+    int array[] = {1, 2, 3, 4, 5, 6};
+    IntStream stream = 
+      Arrays.stream(
+        array, // int[] array
+        1,     // int   startInclusive 開始インデックス
+        4      // int   endExclusive   終了インデックス（その値は含まれない）
+      );
+    stream.forEach(System.out::println);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 2
+: 3
+: 4
+** rangeとrangeClose
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.util.*;
+import java.util.stream.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    System.out.println("range");
+    IntStream.range(1,4).forEach(System.out::println);
+
+    System.out.println("rangeClosed");
+    IntStream.rangeClosed(1,4).forEach(System.out::println);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: range
+: 1
+: 2
+: 3
+: rangeClosed
+: 1
+: 2
+: 3
+: 4
