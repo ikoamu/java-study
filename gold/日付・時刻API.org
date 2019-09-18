@@ -268,4 +268,25 @@ public class Foo {
    | メソッド                                                          | 説明                                                     |
    | static DateTimeFormatter ofPattern(String pattern)                | 指定されたパターンを使用してフォーマッタを作成           |
    | static DateTimeFormatter ofPattern(String pattern, Locale locale) | 指定されたパターンとロケールを使用してフォーマッタを作成 |
+** Instant
+   - ~toEpochMilli~
+   - ~getEpochSecond~
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.time.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    System.out.println(Instant.EPOCH);
+    System.out.println(Instant.now());
+    System.out.println(Instant.now().toEpochMilli());   // EPOCHから何ミリ秒経過したか(long)
+    System.out.println(Instant.now().getEpochSecond()); // EPOCHかん何秒経過したか(long)
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 1970-01-01T00:00:00Z
+: 2019-09-18T10:42:20.822716Z
+: 1568803340822
+: 1568803340
 
