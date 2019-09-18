@@ -66,3 +66,106 @@ public class Foo {
 
 #+RESULTS:
 : JANUARY FEBRUARY MARCH APRIL MAY JUNE JULY AUGUST SEPTEMBER OCTOBER NOVEMBER DECEMBER 
+** ~isXxx()~
+   - String同様、値が同じであれば ~true~ となる
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+
+public class Foo {
+  public static void main(String[] args) {
+    LocalDate t1 = LocalDate.of(2019, 4, 1);
+    LocalDate t2 = LocalDate.of(2019, 4, 1);
+    System.out.println(t1.equals(t2));
+    System.out.println(t1.isEqual(t2));
+    System.out.println(t1.isBefore(t2));
+
+    LocalDateTime d1 = LocalDateTime.of(2019, 4, 1, 12, 45, 17);
+    LocalDateTime d2 = LocalDateTime.of(2019, 4, 1, 12, 45, 17);
+    System.out.println(d1.equals(d2));
+    System.out.println(d1.isEqual(d2));
+    System.out.println(d1.isAfter(d2));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: true
+: true
+: false
+: true
+: true
+: false
+** ~form()~
+   - ~情報が少ないもの.from(情報の多いもの)~ のイメージ
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.time.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    LocalDateTime dateTime = LocalDateTime.of(2019, 4, 1, 11, 32, 45);
+    LocalDate         date = LocalDate.of(2019, 4, 1);
+    LocalTime         time = LocalTime.of(11, 32, 45);
+    
+    // OK : LocalDateTime -> LocalDateTime
+    System.out.println(LocalDateTime.from(dateTime));
+
+    // NG : LocalDate -> LocalDateTime
+    try {
+      System.out.println(LocalDateTime.from(date));
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    // NG : LocalTime -> LocalDateTime
+    try {
+      System.out.println(LocalDateTime.from(time));
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+
+    // OK : LocalDateTime -> LocalDate
+    System.out.println(LocalDate.from(dateTime));
+    // OK : LocalDateTime -> LocalTime
+    System.out.println(LocalTime.from(dateTime));
+    // OK : OffsetDateTime -> LocalTime
+    System.out.println(LocalTime.from(OffsetDateTime.now()));
+
+    // OK : ZonedDateTime -> LocalDateTime
+    System.out.println(LocalDateTime.from(ZonedDateTime.now()));
+    // NG : ZonedDateTime <- LocalDateTime
+    try {
+      System.out.println(ZonedDateTime.from(LocalDateTime.now()));
+    } catch(Exception e) {
+      System.out.println(e);
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 2019-04-01T11:32:45
+: java.time.DateTimeException: Unable to obtain LocalDateTime from TemporalAccessor: 2019-04-01 of type java.time.LocalDate
+: java.time.DateTimeException: Unable to obtain LocalDateTime from TemporalAccessor: 11:32:45 of type java.time.LocalTime
+: 2019-04-01
+: 11:32:45
+: 17:37:47.051107
+: 2019-09-18T17:37:47.051499
+: java.time.DateTimeException: Unable to obtain ZonedDateTime from TemporalAccessor: 2019-09-18T17:37:47.051575 of type java.time.LocalDateTime
+
+** 日付や時間の単位を表すインタフェースとその実装
+*** TemporalUnit
+    - 日付や時間の単位を表すインタフェース
+*** ChronoUnit
+    - 列挙型
+    - TemporalUnitの実装
+    - ~LocalDate.plus(long amountToAdd, TemporalUnit unit)~
+**** ChronoUnitの主な列挙型
+     | 列挙定数 | 説明              |
+     | DAYS     | 1日の概念を表す   |
+     | HOURS    | 1時間の概念を表す |
+     | MINUTES  | 1分の概念を表す   |
+     | MONTHS   | 1ヶ月の概念を表す |
+     | SECONDS  | 1秒の概念を表す   |
+     | WEEKS    | 1週間の概念を表す |
+     | YEARS    | 1年の概念を表す   |
+
