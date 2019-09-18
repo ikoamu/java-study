@@ -168,4 +168,104 @@ public class Foo {
      | SECONDS  | 1秒の概念を表す   |
      | WEEKS    | 1週間の概念を表す |
      | YEARS    | 1年の概念を表す   |
+** TemporalUnitインタフェース
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.time.*;
+import java.time.temporal.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    LocalDate start = LocalDate.of(2016, 5, 30);
+    LocalDate end   = LocalDate.of(2017, Month.MARCH, 31);
+    
+    // startから5日後を取得
+    Temporal t = ChronoUnit.DAYS.addTo(start, 5);
+    System.out.println(t);
+    // startからendまでの日数を取得
+    long days = ChronoUnit.DAYS.between(start, end);
+    System.out.println(days);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 2016-06-04
+: 305
+** ZoneId
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.time.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    System.out.println(ZoneId.systemDefault());
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: Asia/Tokyo
+** DurationとPeriod
+*** Duration
+    - 時間ベースの時間量を表す
+      | メソッド         | 説明                               |
+      | int getNano()    | この間隔の秒内のナノ秒数を取得する |
+      | int getSeconds() | この間隔の秒数を取得する           |
+*** Period
+    - 日付ベースの時間量を表す
+      | メソッド        | 説明                     |
+      | int getDays()   | この期間の日数を取得する |
+      | int getMonths() | この期間の月数を取得する |
+      | int getYears()  | この期間の年数を取得する |
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.time.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    LocalDateTime startDateTime = LocalDateTime.of(2015,1,1,0,30);
+    LocalDateTime endDateTime   = LocalDateTime.of(2015,1,2,23,0);
+    Duration d = Duration.between(startDateTime, endDateTime);
+
+    LocalDate startDate = LocalDate.now();
+    LocalDate endDate   = startDate.plusDays(10);
+    Period x = startDate.until(endDate);
+
+    System.out.println(d.getSeconds());
+    System.out.println(x.getDays());
+
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 167400
+: 10
+** 日時表示のフォーマット
+   | フィールド      | 説明                                        |
+   | BASIC_ISO_DATE  | 基本的なISO日付                             |
+   | ISO_DATE        | オフセット付きまたはオフセットなしのISO日付 |
+   | ISO_LOCAL_DATE  | ISOローカル日付                             |
+   | ISO_OFFSET_TIME | オフセット付きの時間                        |
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.util.*;
+import java.time.*;
+import java.time.format.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    DateTimeFormatter f1 = DateTimeFormatter.BASIC_ISO_DATE;
+    DateTimeFormatter f2 = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+
+    System.out.println(f1.format(LocalDateTime.now()));
+    System.out.println(f2.format(LocalDateTime.now()));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 20190918
+: 2019/09/18 19:19:23
+** ~ofPattern()~
+   | メソッド                                                          | 説明                                                     |
+   | static DateTimeFormatter ofPattern(String pattern)                | 指定されたパターンを使用してフォーマッタを作成           |
+   | static DateTimeFormatter ofPattern(String pattern, Locale locale) | 指定されたパターンとロケールを使用してフォーマッタを作成 |
 
