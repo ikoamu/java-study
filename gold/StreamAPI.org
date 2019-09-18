@@ -226,4 +226,116 @@ public class Foo {
 *** ~Stream<T> peek(Consumer<? super T>) action~
     - Consumerオブジェクトを引数に取る（引数あり、返り値なし）
       - Listの ~add()~ やログ出力など
-** 
+** allMatch
+   - 終端操作が ~allMatch()~ の場合、 要素のひとつが ~false~ になった時点で操作を中断し、
+     ~false~ を返す
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.util.*;
+import java.util.stream.*;
+import java.util.function.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    IntPredicate p = i -> {
+      System.out.println("hello ");
+      return i % 2 == 0;
+    };
+    
+    boolean result = IntStream.of(1, 2, 3).allMatch(p);
+    System.out.println(result);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: hello 
+: false
+** ~flatMap()~
+   - 構造が入れ子になったストリームをフラットなストリームに変換する
+     | メソッド        | 説明               |
+     |-----------------+--------------------|
+     | flatMap         | Stream<R>を返す    |
+     | flatMapToDouble | DoubleStreamを返す |
+     | flatMapToInt    | IntStreamを返す    |
+     | flatMapToLong   | LongStreamを返す   |
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.util.*;
+import java.util.stream.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    List<List<String>> list = Arrays.asList(
+      Arrays.asList("A", "B", "C"), Arrays.asList("D", "B", "E"));
+
+    list.stream().flatMap(l -> l.stream())
+    .distinct()
+    .forEach(System.out::println);
+
+    List<IntStream> list2 = Arrays.asList(
+      IntStream.of(1, 2, 3), IntStream.of(4, 3, 4));
+
+    list2.stream().flatMapToInt(l -> l)
+    .distinct()
+    .forEach(System.out::println);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: A
+: B
+: C
+: D
+: E
+: 1
+: 2
+: 3
+: 4
+** merge
+   - Java SE 8ではMapインターフェイスに新しくdefaultメソッドとしてmergeメソッドが追加された
+   - メソッド定義
+     #+BEGIN_SRC java
+     default V merge(
+       K key,
+       V value,
+       BiFunction<? super V, ? super V, ? extends V> remappingFunction 
+     )
+     #+END_SRC
+     - 
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.util.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    Map<String, String> map1 = new HashMap<>();
+    map1.put("key1", "value1");
+    map1.merge("key1", "value2", (v1, v2) -> v1.concat(v1));
+    map1.merge("key2", "value2", (v1, v2) -> v1.concat(v1)); // 該当するキーがない場合、v2が新たにputされる
+    System.out.println(map1);
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: {key1=value1value1, key2=value2}
+** リダクション
+   - ストリーム・オブジェクト内の要素を１つに要約する終端操作
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.util.*;
+import java.util.stream.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    IntStream stream1 = IntStream.of(1,2,3);
+    //                              初期値 + 1 + 2 + 3
+    System.out.println(stream1.reduce(100, (x, y) -> x + y));
+    IntStream stream2 = IntStream.of(1,2,3);
+    //                              初期値なし->Optionalとなる
+    System.out.println(stream2.reduce((x, y) -> x + y));
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: 106
+: OptionalInt[6]
