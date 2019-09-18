@@ -187,3 +187,43 @@ public class Foo {
  : 3
  : 2
  : 1
+** 終端操作・遅延評価
+   - Streamは終端操作時にセットされた中間操作も行う
+     下の例のように、標準出力も終端操作時に実行
+   - ストリームの各要素は、
+
+     要素１の中間操作１，２、３
+     
+     要素２の中間操作１，２、３
+
+     という順序で実行される
+
+     （要素１の中間操作１後に要素２の中間操作１という順ではない）
+#+BEGIN_SRC java :results output :exports both :classname Foo
+ import java.util.*;
+ import java.util.stream.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    Stream<String> stream = Stream.of("banana", "apple", "orange")
+      .filter(e -> e.length() > 5)
+      .peek(e -> System.out.println(e + " "))
+      .map(String::toUpperCase)
+      .peek(e -> System.out.println(e + " ")); // 中間操作まで
+
+    System.out.println("OK");
+    long cocunt = stream.count(); // 終端操作
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: OK
+: banana 
+: BANANA 
+: orange 
+: ORANGE 
+*** ~Stream<T> peek(Consumer<? super T>) action~
+    - Consumerオブジェクトを引数に取る（引数あり、返り値なし）
+      - Listの ~add()~ やログ出力など
+** 
