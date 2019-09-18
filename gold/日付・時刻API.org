@@ -1,0 +1,9 @@
+* 日付・時刻API
+** Date and Time APIのパッケージ
+   | パッケージ名       | 説明                                                                      |
+   | java.time          | 日付と時刻を表すコアAPIを提供する                                         |
+   | java.time.chrono   | 和暦など。独自のカレンダーシステムを定義できる                            |
+   | java.time.format   | 日付と時刻のフォーマットおよび解析用APIを提供する                         |
+   | java.time.temporal | 基本的な日付の単位（長さや概念）やフィールド（項目）に関するAPIを提供する |
+   | java.time.zone     | タイムゾーンのサポートAPIを提供する                                       |
+
