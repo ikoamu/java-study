@@ -1,0 +1,238 @@
+* Java I/O
+** ~java.io.File~
+   - Fileクラスはファイルだけでなく、ディレクトリを扱うこともできる
+   - ファイル所有者やセキュリティ属性などの情報の取得や設定はできない
+*** Fileクラスのコンストラクタ
+#+BEGIN_SRC java
+File(File parent, String child)
+File(String pathname)
+File(String parent, String child)
+File(URI uri)
+#+END_SRC
+  - Fileオブジェクトはファイルもしくはディレクトリのパス名を表すだけ。
+  - 存在しないファイルパスを指定してFileオブジェクトを生成することも可能
+  - 実際に存在するかどうかは、 ~exist()~ で確認する
+*** Fileクラスの主なメソッド
+    | メソッド                 | 説明                                                                                           |
+    | boolean createNewFile()  | 抽象パスが示すファイルが存在しない場合に、空の新しいファイルを不可分(atomic)に生成する         |
+    | boolean delete()         | 抽象パスが示すファイルまたはディレクトリを削除する                                             |
+    | void deleteOnExit()      | 抽象パスが示すファイルまたはディレクトリが、仮想マシンが終了したときに削除されるように要求する |
+    | boolean exist()          | 抽象パスが示すファイルまたはディレクトリが存在するかどうかを判定する                           |
+    | String getAbsolutePath() | 抽象パスの絶対パスを返す                                                                       |
+    | String getName()         | 抽象パスが示すファイル名またはディレクトリ名を返す                                             |
+    | String getParent()       | 抽象パスの親のパス名を取得する（親ディレクトリを示さない場合はnullをかえす）                   |
+    | boolean isDerectory()    | 抽象パスが示すファイルがディレクトリであるかを判定する                                         |
+    | boolean isFile()         | 抽象パスが示すファイルが普通のファイルであるかを判定する                                       |
+    | long lastModified()      | 抽象パスが示すファイルが最後に変更された時間を返す                                             |
+    | long length()            | 抽象パスが示すファイルの長さを返す                                                             |
+    | String[] list()          | 抽象パスが示すディレクトリ内のファイル及びディレクトリをの配列を返す                           |
+    | File[] listFile          | 抽象パスが示すディレクトリ内のファイル及びディレクトリをの配列を返す                           |                                                                                               |
+** ファイルストリーム
+*** ファイルの入出力を扱う4つのクラス
+    |                  | 読み取り（入力） | 書き込み（出力） |
+    | バイナリファイル | FileInputStream  | FileOutputStream |
+    | テキストファイル | FileReader       | FileWriter       |
+    - テキストファイルをFileInputSteramやFileOutputStreamクラスで処理することもできるが、
+      文字エンコーディングに関する機能や効率性を考えると、FileReaderとFileWriterで処理するのが適切である
+    - 逆に、バイナリファイルをFileReaderやFileWiterで扱うことはできない
+#+BEGIN_SRC java
+try (
+  FileReader in = new FileReader("sample.txt");
+  FileWriter out = new FileWriter("copy.txt")
+) {
+  int ch;
+  while ((ch = in.read()) != null) {
+    out.write((char) ch);
+  }
+} catch (IOException e) {
+  System.out.println(e.getMessage());
+}
+#+END_SRC
+** BufferedReader・BufferedWriter
+   - テキストファイルのデータを1行ずつ読み書きできる
+*** ~String readLine()~
+    - 1行の文字列（改行コードまで）
+#+BEGIN_SRC java
+try (
+  BufferedReader in  = new BufferedReader(new FileReader("sample.txt"));
+  BufferedWriter out = new BufferedWriter(new FileWriter("copy.txt"))
+) {
+  String line;
+  while((line = in.readLine()) != null) {
+    out.write(line);
+    out.newLine();
+  }
+} catch (IOException e) {
+  System.out.println(e.getMessage());
+} 
+#+END_SRC
+** Decoratorパターン
+   - java.ioパッケージの入出力ストリームを扱う様々なクラスを組み合わせて利用できる
+*** Decorated
+    - 装飾されるもの（基本機能）
+    - Reader・Writer（抽象クラス）
+*** Decorator     
+    - 装飾するもの（拡張機能）
+    - BufferedReder・BufferedWriterなど
+** マーク機能
+   - InputStreamクラスおよびReaderクラスでは、データの読み取り時に位置を制御する
+     マーク機能に関する3つのメソッドを宣言している
+   - マーク機能により、読み取り位置を制御しながらデータを読み取ることができる
+   - 使用する入力ストリームによってはサポートされていない場合がある
+     
+     -> ~markSupportedメソッド~ で確認することができる
+*** マーク機能に関連するメソッド
+    | メソッド                 | 説明                                                                                              |
+    | void mark(int readlimit) | 入力ストリームの現在位置にマークを設定する ~readLimit~ はマーク後に読み取ることのできる文字の上限 |
+    | void reset()             | 入力ストリームの読み取り位置を最後に設定したマークに移動する                                      |
+    | long skip(long n)        | 入力ストリームからnバイトのデータをスキップして破棄する                                           |
+    - ~mark~ せずに ~reset~ すると、 ~IOException~ がスローされる
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.io.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    // 0 1 2 3 4 5 6 7
+    // a b c d e f g h
+    // a x c x x f
+    try(BufferedReader in = new BufferedReader(new FileReader("./sample/sample.txt"))) {
+      for(int i = 0; i < 3; i++) {
+        in.skip(i);
+        System.out.print((char) in.read());
+      }
+      in.reset(); // <- markせずにreset
+    } catch (IOException e) {
+      System.out.println();
+      System.out.println(e);
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: acf
+: java.io.IOException: Stream not marked
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.io.*;
+
+public class Foo {
+  public static void main(String[] args) {
+    // 0 1 2 3 4 5 6 7
+    // a b c d e f g h
+    try(BufferedReader in = new BufferedReader(new FileReader("./sample/sample.txt"))) {
+                                                  // -> x 
+      System.out.print(" " + (char) in.read());   // a  b  c  d  e  f  g  h
+                                                  //
+                                                  //    -> x
+      System.out.print(" " + (char) in.read());   // a  b  c  d  e  f  g  h
+      in.mark(1);                                 //       m
+                                                  //
+                                                  //         -------------> x
+      System.out.print(" " + in.readLine());      // a  b  c  d  e  f  g  h
+                                                  //
+                                                  //       x <-------------
+      in.reset();                                 // a  b  c  d  e  f  g  h
+      System.out.println(" " + (char) in.read());
+
+
+    } catch (IOException e) {
+      System.out.println();
+      System.out.println(e);
+    }
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+:  a b cdefgh c
+** PrintStream・PrintWriter
+   - データ出力専用クラス
+   - 通常のWriterやFileWriterなどに対して、以下のような拡張機能を提供する
+     - プリミティブ型をそのまま出力する
+
+       #+BEGIN_SRC java
+       try(PrintWriter writer = new PrintWriter("out.txt")) {
+         writer.println("Hello");
+         writer.println(0.5);
+         writer.println(true); // printlnはプラットフォームを意識した改行文字を書く必要がない
+       } catch(IOException e) {
+         e.printStackTrace();
+       }
+       #+END_SRC
+
+     - 書式変換機能付き出力
+     - 自動フラッシュ（自動クローズ）
+   - どちらの機能もほぼ同じ
+     （PrintWriterだけでいいけど、後方互換性のためPrintStreamも残っている）
+** ~java.io.Consoleクラス~
+   - 標準入力からのデータの読み取りを完結に記述できるようになった
+     - before
+       #+BEGIN_SRC java
+       BufferedReader br = 
+         new BufferedReader(new InputStreamReader(System.in));
+       String line = br.readLine();
+       #+END_SRC
+     - after
+       #+BEGIN_SRC java
+       Console console = System.console();
+       String line = console.readLine();
+       #+END_SRC
+   - Consoleクラスのインスタンスは、システムにおける唯一のコンソールを表す
+     -> コンストラクタは用意されていない
+   - インスタンスの取得には、 ~Systemクラス~ が提供する ~consoleメソッド~ を使用する必要がある
+     - IDEによってはConsoleクラスに未対応の場合があるため、 ~System.console()~ が ~null~ となる場合がある
+*** ~readPassword()~
+    - アプリケーションでパスワードの入力機能を提供する場合には、~Consoleクラス~ の ~readPasswordメソッド~ を使用することができる
+**** メソッド定義
+
+     #+BEGIN_SRC java
+     public char[] readPassword()
+     #+END_SRC
+
+     #+BEGIN_SRC java
+     public char[] readPassword(String fmt, Object... args)
+     #+END_SRC
+** 直列化と非直列化
+   - 以下に示すような要件を実現したい場合のために直列化と非直列化という仕組みが提供されている
+     - アプリケーションが終了した後もオブジェクトをそのまま保存しておき、
+       次にアプリケーションが起動した際に、そのオブジェクトをメモリ上に復元したい
+     - JVMが利用可能なメモリが不足してきた場合に、現在アクティブではないオブジェクトをハードディスクに退避させ、次に
+       必要となった際にディスクからメモリ上に復元したい（OSのスワッピング機能と同様）
+     - あるアプリケーションで使用しているオブジェクトとネットワーク越しに別のアプリケーションに転送したい
+   - Serializableインターフェイスを実装している必要がある
+*** ~java.io.ObjectOutPutStream~ ・ ~writeObjectメソッド~
+    オブジェクトの直列化に使用する
+#+BEGIN_SRC java
+try (
+  ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("sample.ser")) // .serは慣習（なんでもよい）
+) {
+  out.writeObject(obj);
+catch (IOException e) {
+  System.out.println(e);
+}
+#+END_SRC
+*** ~java.io.ObjectInputStream~ ・ ~readObjectメソッド~
+#+BEGIN_SRC java
+    オブジェクトの非直列化に使用する
+try (
+  ObjectInputStream in = new ObjectInputStream(new FileInputStream("sample.ser"))
+) {
+  obj = in.readObject();
+catch (IOException e) {
+  System.out.println(e);
+}
+#+END_SRC    
+*** フィールド
+    - オブジェクトが直列化される際、以下に示すフィールド変数は直列化の対象から除外される
+      - static変数
+      - transient修飾子付きで宣言された変数
+** ~java.nio.file.Pathインターフェイス~
+   - ~java.io.File~ には下記のような欠点があった
+     - シンボリックリンクのようなUNIX系のファイルシステム固有の機能が利用できない
+     - ディレクトリ内で発生したイベント（ファイルやサブディレクトリの作成、削除、変更）を監視するための仕組みが提供されていない
+     - 基本的なファイル属性以外の詳細な情報の取得や設定を行うには、プラットフォーム固有のコードを利用する必要がある
+     - 多くのメソッドにおいて、適切な例外がスローがされない
+   - ~Pathインターフェイス~ は上記のような欠点を解消するために導入された
+     - プラットフォームのファイルシステム固有の仕組みを透過的に扱える
+     - 柔軟性や拡張性が向上した
+** ~java.nio.file.FileSystemクラス~ と ~java.nio.file.FileSystemsクラス~ 
