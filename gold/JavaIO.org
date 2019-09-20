@@ -236,3 +236,158 @@ catch (IOException e) {
      - プラットフォームのファイルシステム固有の仕組みを透過的に扱える
      - 柔軟性や拡張性が向上した
 ** ~java.nio.file.FileSystemクラス~ と ~java.nio.file.FileSystemsクラス~ 
+*** FileSystemクラス
+    - プラットフォーム固有のファイルシステムを表す抽象クラス
+*** FileSystemsクラス
+    - FileSystemオブジェクトを返すファクトリ・メソッドを提供する
+      #+BEGIN_SRC java
+      static FileSystem getDefault()
+      #+END_SRC
+** Pathオブジェクトの取得方法
+   - ~FileSystems.getDefault().getPath("path")~
+   - ~Paths.get("first", more)~
+   - ~Paths.get(uri)~
+** Pathsクラス
+   ~Path~ オブジェクトを取得するための ~static~ なgetメソッドのみを提供する簡易Utilクラス
+** FileオブジェクトからPathオブジェクトを取得する方法
+   #+BEGIN_SRC java
+   Path path = file.toPath();
+   #+END_SRC
+** ~path.getXxx()~
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Foo {
+  public static void main(String[] args) {
+    Path path = Paths.get("/home/ikoamu/atmos-it/junk.org");
+    System.out.printf(
+      "%s, %s, %s, %d\n", path.getRoot(), path.getName(0), path.getFileName(), path.getNameCount());
+    Path path2 = Paths.get("./sample/sample.txt");
+    System.out.printf(
+      "%s, %s, %s, %d\n", path2.getRoot(), path2.getName(0), path2.getFileName(), path2.getNameCount());
+    Path path3 = Paths.get("C://x//y//z");
+    System.out.printf(
+      "%s, %s, %s, %d\n", path3.getRoot(), path3.getName(0), path3.getFileName(), path3.getNameCount());
+    // 黒本だと
+    // "C:\\x\\y\\z" 
+    // getRoot()      -> C:\
+    // getName(0)     -> x
+    // getFileName()  -> z
+    // getNameCount() -> 3
+  }
+}
+#+END_SRC
+
+#+RESULTS:
+: /, home, junk.org, 4
+: null, ., sample.txt, 3
+: null, C:, z, 4
+** ~subpath~
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Foo {
+  public static void main(String[] args) {
+    Path path = Paths.get("/var/lib/gems");
+    System.out.println(path.subpath(1,2)); // endindexは含まない
+  }
+}
+#+END_SRC 
+
+#+RESULTS:
+: lib
+
+** ~resolveメソッド~
+   - 引数
+     - 相対パス
+       2つのパスを結合したパスを返す
+     - 絶対パス
+       渡されたパスそのものを返す
+     - 空
+       自分自身を表すパスを返す
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Foo {
+  public static void main(String[] args) {
+    Path path1 = Paths.get("/home/ikoamu/junk/2019-05-15-144333.org");
+    Path path2 = Paths.get("/var/lib/gems");
+    Path path3 = Paths.get("sample");
+    System.out.println(path1.resolve(path2));
+    System.out.println(path3.resolve(path2));
+    System.out.println(path2.resolve(path3));
+  }
+}
+#+END_SRC     
+
+#+RESULTS:
+: /var/lib/gems
+: /var/lib/gems
+: /var/lib/gems/sample
+** ~resolveSiblingメソッド~
+   - 引数
+     - 相対パス
+       現在のパスの親ディレクトリからのパスとして解決したいパスを返す
+     - 絶対パス
+       渡されたパスそのものを返す
+   - ただし、メソッド呼び出し側のPathオブジェクトが表すパスが相対パスが絶対パスの場合には、
+   引数で渡されたパスそのものを返す
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Foo {
+  public static void main(String[] args) {
+    Path path2 = Paths.get("/var/lib/gems");
+    Path path3 = Paths.get("sample");
+    System.out.println(path3.resolveSibling(path2));
+    System.out.println(path2.resolveSibling(path3));
+  }
+}
+#+END_SRC     
+
+#+RESULTS:
+: /var/lib/gems
+: /var/lib/sample
+** ~normalize~
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Foo {
+  public static void main(String[] args) {
+    Path path = Paths.get("/home/./ikoamu/../ikoamu/study/./../study/docker/node-playground/docker-compose.yml");
+    System.out.println(path);
+    path.normalize();
+    System.out.println(path);
+    System.out.println(path.normalize());
+  }
+}
+#+END_SRC   
+
+#+RESULTS:
+: /home/./ikoamu/../ikoamu/study/./../study/docker/node-playground/docker-compose.yml
+: /home/./ikoamu/../ikoamu/study/./../study/docker/node-playground/docker-compose.yml
+: /home/ikoamu/study/docker/node-playground/docker-compose.yml
+** ~relativize~
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Foo {
+  public static void main(String[] args) {
+    Path path1 = Paths.get("/a/b/c/d.txt");
+    Path path2 = Paths.get("/a/b/e/f.txt");
+    System.out.println(path1.relativize(path2)); // path1 から path2へ
+  }
+}
+#+END_SRC   
+
+#+RESULTS:
+: ../../e/f.txt
+** Filesクラス
+   - staticメソッドのみを提供するUtilクラス
+   - ファイルやディレクトリの作成・削除・コピー・移動、ファイル属性の取得・設定などできる

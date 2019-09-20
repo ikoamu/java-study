@@ -1,0 +1,29 @@
+#    -*- mode: org -*-
+
+
+Archived entries from file /mnt/c/Users/aokis/java-study/gold/JavaIO.org
+
+
+* ~Pathインターフェイス~ の ~resolveメソッド~
+  :PROPERTIES:
+  :ARCHIVE_TIME: 2019-09-20 金 10:21
+  :ARCHIVE_FILE: /mnt/c/Users/aokis/java-study/gold/JavaIO.org
+  :ARCHIVE_OLPATH: Java I/O
+  :ARCHIVE_CATEGORY: JavaIO
+  :END:
+   - 相対パス
+     2つのパスを結合したパスを返す
+   - 絶対パス
+     渡されたパスそのものを返す
+   - 空
+     自分自身を表すパスを返す
+#+BEGIN_SRC java :results output :exports both :classname Foo
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public class Foo {
+  public static void main(String[] args) {
+  
+  }
+}
+#+END_SRC     

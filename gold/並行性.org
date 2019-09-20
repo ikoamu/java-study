@@ -47,3 +47,7 @@
    | TransferQueue          | コンシューマが要素を受け取るまでプロデューサが待機するBlockingQueue |
 ** 
 ** CyclicBarrier
+** Fork/Joinフレームワーク
+   - マルチコアCPUを効率的に利用することが最大の目的
+   - Work-stealiingアルゴリズムを採用している
+     - 複数のワーカースレッドがそれぞれワークキューをもち、互いに横取りができる
