@@ -1,0 +1,142 @@
+* Java SE 8 Programmer II (1Z0-809) サンプル問題
+~https://www.oracle.com/jp/education/certification/java-809a-3516143-ja.html~
+** 1
+#+BEGIN_SRC java
+class OutOfInkException extends Exception { }
+
+class Pen {
+  void write() throws OutOfInkException { }
+  protected void refillInk() throws Exception { }
+}
+
+class BallpointPen extends Pen {
+  private void write() throws OutOfInkException { } // line 1
+  public void refillInk() { } // line 2
+} 
+
+public class Test {
+  public static void main(String[] args) throws Exception {
+    Pen p = new BallpointPen();
+    p.write();
+    p.refillInk();
+  }
+}   
+#+END_SRC
+- このコードを実行すると、どのような結果になりますか。
+  1. line 1が原因でコンパイルに失敗する。
+  2. line 2が原因でコンパイルに失敗する。
+  3. line 1と line 2が原因でコンパイルに失敗する。
+  4. コンパイルは正常に成功するが、実行時例外が発生する。
+  5. コンパイル、実行ともに問題なく成功する。
+** 2
+#+BEGIN_SRC java
+class Car {
+  int cno;
+  String name;
+
+  public Car(int cno, String name) {
+    this.cno = cno;
+    this.name = name;
+  }
+
+  public boolean equals(Object obj) {
+    if (obj == null) { return false; }
+
+    Car other = (Car) obj;
+
+    if (this.name.equals(other.name)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+public class Test {
+  public static void main(String[] args) {
+    Car c1 = new Car(1234, "Taxi");
+    Car c2 = c1;
+    Car c3 = new Car(9876, "Taxi");
+    System.out.println(c1.equals(c2));
+    System.out.println(c1 == c2);
+    System.out.println(c1.equals(c3));
+    System.out.println(c1 == c3);
+  }
+}
+#+END_SRC
+- このコードを実行すると、trueはいくつ表示されますか。
+  1. 1つ
+  2. 2つ
+  3. 3つ
+  4. 4つ
+** 3
+#+BEGIN_SRC java
+interface Movable {
+  void walk();
+}
+
+abstract class Machine { }
+
+class Robot extends Machine implements Movable {
+  void walk() { }
+}
+
+final class Accounts {
+  public static void expire();
+}
+
+class Ship {
+  public void depart() {
+    class Anchor { }
+  }
+}
+#+END_SRC
+- 
+  1. Machineのみ
+  2. Robotのみ
+  3. MachineとRobot
+  4. MachineとShip
+  5. RobotとAcounts
+  6. RobotとShip
+** 4
+#+BEGIN_SRC java
+interface ParentIF {
+  void parentMetnod();
+}
+
+@FunctionalInterface
+interface FuncIF { // line 1
+  public default void method() { } // line 2
+  // line 3
+}
+#+END_SRC
+- FuncIFインタフェースを正常にコンパイルするために必要な修正はどれですか？
+  1. line 1を以下のように修正する。
+  
+    ~interface FuncIF extends ParentIF {~
+  2. line 2をコメントアウトする。
+  3. line 3に以下のコードを挿入する。
+    
+    ~public static void classMethod() { }~
+  4. line 3に以下のコードを挿入する。
+    
+    ~public boolean equals(Object obj);~
+** 5
+#+BEGIN_SRC java
+Deque<Integer> nums = new ArrayDeque<>();
+
+nums.push(10);
+nums.add(20);
+nums.push(30);
+
+System.out.println(nums.remove());
+System.out.println(nums.pop());
+System.out.println(nums);
+#+END_SRC
+- このコードをコンパイル、実行すると何が出力されますか。
+  1. 
+     #+BEGIN_SRC example
+     30
+     10
+     [20]
+     #+END_SRC
