@@ -1,5 +1,5 @@
 * Java SE 8 Programmer II (1Z0-809) サンプル問題
-~https://www.oracle.com/jp/education/certification/java-809a-3516143-ja.html~
+  https://www.oracle.com/jp/education/certification/java-809a-3516143-ja.html
 ** 1
 #+BEGIN_SRC java
 class OutOfInkException extends Exception { }
@@ -134,9 +134,243 @@ System.out.println(nums.pop());
 System.out.println(nums);
 #+END_SRC
 - このコードをコンパイル、実行すると何が出力されますか。
+
   1. 
      #+BEGIN_SRC example
      30
      10
      [20]
      #+END_SRC
+
+  2. 
+     #+BEGIN_SRC example
+     30
+     10
+     [10, 20]
+     #+END_SRC
+
+  3. 
+     #+BEGIN_SRC example
+     10
+     20
+     [30]
+     #+END_SRC
+
+  4. 
+     #+BEGIN_SRC example
+     10
+     20
+     [20, 30]
+     #+END_SRC
+** 6
+#+BEGIN_SRC java
+class Shoes {
+  private String color;
+  public Shoes(String color) { this.color = color; }
+  public String getColor() { return color; }
+}
+
+public class Test {
+  public static void main(String[] args) {
+    List<Shoes> sList = Arrays.asList(
+      new Shoes("Blue"),
+      new Shoes("Red"),
+      new Shoes("Green")
+    );
+    Stream<Shoes> ss = sList.stream();
+    // line 1
+    System.out.println(count);
+  }
+}
+#+END_SRC
+- このコードをコンパイル、実行して2が表示されるようにするには、どのコードをline 1に挿入しますか。
+  1. 
+#+BEGIN_SRC java
+long count = ss.map(s -> s.length() > 3).count();
+#+END_SRC 
+
+  2. 
+#+BEGIN_SRC java
+long count = ss.map(s -> s.getColor())
+  .peek(s -> s.length() > 3)
+  .count();     
+#+END_SRC
+
+  3. 
+#+BEGIN_SRC java
+long count = ss.map(Shoes::getColor)
+  .filter(s -> s.length() > 3)
+  .count();
+#+END_SRC     
+
+4. 
+#+BEGIN_SRC java
+long count = ss.map(s -> s.getColor().subSequence(0,1))
+  .count();
+#+END_SRC
+** 7
+#+BEGIN_SRC java
+List<Integer> list = Arrays.asList(3, 3, 3, null); // line 1
+Function<Integer, Integer> func = i -> i; // line 2
+Double avg =      // line 3
+  list.stream()
+    .mapToInt(func) // line 4
+    .average();     // line 5
+
+System.out.println(avg);
+#+END_SRC
+- このコードをコンパイル、実行して3.0と表示するために必要な修正はどれですか。（３つ選択してください）
+1. line 1を以下のように書き換える。
+
+~List<Integer> list = Arrays.asList(3, 3, 3, 3);~
+
+2. line 2を以下のように書き換える。
+
+~ToIntFunction<Integer> func = i -> i;~
+
+3. line 3を以下のように書き換える。
+
+~double avg =~
+
+4. line 4を以下のように書き換える。
+
+~.map(func)~
+
+5. line 5を以下のように書き換える。
+
+~.average().orElse(0.0);~
+** 8
+#+BEGIN_SRC java  
+BiFunction<String, Double, Integer> bf = (s, d) -> s.length() * d; // line 1
+System.out.println(bf.apply("Java", 0.5)); // line 2
+#+END_SRC
+- このコードをコンパイル、実行すると何が出力されますか。
+  1. 2
+  2. 2.0
+  3. line 1でコンパイルエラーが発生する。
+  4. line 2でコンパイルエラーが発生する。
+** 9
+#+BEGIN_SRC java
+Optional<String> str = Optional.of(null); // line 1
+
+System.out.println(str.orElse(null)); // line 2
+System.out.println(str.get()); // line 3
+System.out.println(str.isPresent()); // line 4
+
+str.ifPresent(System.out::println); // line 5
+#+END_SRC
+- このコードをコンパイルして実行したとき、どの行で実行時エラーが発生しますか。（最初に発生する行を選択してください）
+  1. line 1
+  2. line 2
+  3. line 3
+  4. line 4
+  5. line 5
+** 10
+#+BEGIN_SRC java
+class City {
+  String name;
+  int ward;
+
+  public City(String name, int ward) {
+    this.name = name;
+    this.ward = ward;
+  }
+
+  public String getName() { return name; }
+
+  public int getWard() { return ward; }
+
+  public String toString() { return name + ":" + ward; }
+}
+
+public class Test {
+  public static void main(String[] args) {
+    List<City> cities = Arrays.asList(
+      new City("Yokohama", 18),
+      new City("Hamamatsu", 7),
+      new City("Nagoya", 16),
+      new City("Fukuoka", 7)
+    );
+  
+    cities.stream().sorted(
+      Comparator.comparing(City::getWard)
+      .thenComparing(City::getName).reversed()
+    ).forEach(System.out::println);
+  }
+}
+#+END_SRC
+1. コンパイルエラーが発生する。
+
+2. 
+  Fukuoka:7
+  
+  Hamamatsu:7
+  
+  Nagoya:16
+  
+  Yokohama:18
+
+3. 
+  Yokohama:18
+  
+  Nagoya:16
+  
+  Fukuoka:7
+  
+  Hamamatsu:7
+
+4. 
+  Yokohama:18
+  
+  Nagoya:16
+  
+  Hamamatsu:7
+  
+  Fukuoka:7
+** 11
+#+BEGIN_SRC java
+class TextResource implements Closeable { // line 1
+  public void close() throws IOException { }
+}
+
+public class Test {
+  public static void main(String[] args) {
+    TextResource tr; // line 2
+    try (tr = new TextResource()) { // line 3
+    // line 4
+    } catch (IOException e) { }
+    // line 5
+  }
+}
+#+END_SRC
+- このコードをコンパイル、実行するために必要な修正はどれですか？
+  1. line 1を以下のように変更する。
+     ~class TextResource implements AutoCloseable {~
+  2. line 2を削除し、line 3を以下のように変更する。
+     ~try (TextResource tr = new TextResource()) {~
+  3. line 4に以下のコードを挿入する。
+     ~tr.close();~
+  4. line 5に以下のコードを挿入する。
+     ~finally { tr.close(); }~
+** 12
+#+BEGIN_SRC java
+ZoneId zid = ZoneId.of("Europe/Madrid");
+
+ZonedDateTime dtFrom = ZonedDateTime.of(
+  LocalDateTime.of(2017, 3, 26, 0, 0), zid);
+
+ZonedDateTime dtTo = dtFrom.plusHours(3);
+
+DateTimeFormatter formatter =
+  DateTimeFormatter.ofPattern("H:mm - ");
+
+System.out.print(formatter.format(dtTo)); 
+
+System.out.println(
+  ChronoUnit.HOURS.between(dtFrom, dtTo));
+#+END_SRC
+- このコードを実行すると、どのような結果になりますか。
+  1. 3:00 - 3
+  2. 3:00 - 4
+  3. 4:00 - 3
+  4. 4:00 - 4
